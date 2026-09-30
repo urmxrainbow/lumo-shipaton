@@ -8,7 +8,7 @@
  * transform, so the intended framing is visible before the footage exists.
  */
 import React from 'react';
-import {Freeze, OffthreadVideo} from 'remotion';
+import {Freeze, Img, OffthreadVideo} from 'remotion';
 import {MEDIA_SLOTS, SlotId} from '../media.config';
 import {slotSrc} from '../lib/media';
 import {C, FPS, display, text} from '../theme';
@@ -97,6 +97,8 @@ export const MediaSlot: React.FC<Props> = ({
 
 	// Source time: play in→out at `rate`, freeze on the last frame.
 	const t = Math.min(c.out, Math.max(c.in, c.in + (playhead / FPS) * (c.rate ?? 1)));
+	// For screenshots: 0→1 across the clip's duration (0 for still clips).
+	const stillDrift = c.out > c.in ? (t - c.in) / (c.out - c.in) : 0;
 
 	const {left, top, cw, ch} = cropGeom(id, w, h, crop);
 
@@ -115,10 +117,23 @@ export const MediaSlot: React.FC<Props> = ({
 			}}
 		>
 			<div style={{position: 'absolute', left, top, width: cw, height: ch}}>
-				{src ? (
+				{src?.kind === 'video' ? (
 					<Freeze frame={Math.round(t * FPS)}>
-						<OffthreadVideo src={src} muted style={{width: '100%', height: '100%', objectFit: 'fill'}} />
+						<OffthreadVideo src={src.url} muted style={{width: '100%', height: '100%', objectFit: 'fill'}} />
 					</Freeze>
+				) : src?.kind === 'image' ? (
+					// A screenshot: during a clip that would have moved (e.g. a scroll),
+					// a slow, subtle push keeps the still alive.
+					<Img
+						src={src.url}
+						style={{
+							width: '100%',
+							height: '100%',
+							objectFit: 'fill',
+							transform: `scale(${1 + 0.035 * stillDrift})`,
+							transformOrigin: `${crop.x * 100}% ${crop.y * 100}%`,
+						}}
+					/>
 				) : (
 					<PlaceholderCanvas crop={crop} />
 				)}

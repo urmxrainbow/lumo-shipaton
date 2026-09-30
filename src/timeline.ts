@@ -9,11 +9,12 @@ type Span = {from: number; duration: number};
 const span = (a: number, b: number): Span => ({from: src(a), duration: src(b) - src(a)});
 
 export const TIMELINE = {
-	problem: span(0, HIT.pickup),
+	problem: span(HIT.start, HIT.pickup),
 	release: span(HIT.pickup, HIT.backToBlack),
 	lumo: span(HIT.backToBlack, HIT.product),
-	product: span(HIT.product, HIT.intoMemory),
-	memories: span(HIT.intoMemory, HIT.breakDown),
+	product: span(HIT.product, HIT.checkbox),
+	checkin: span(HIT.checkbox, HIT.lookBack), // HERO FEATURE: a check-in becomes a memory
+	lookBack: span(HIT.lookBack, HIT.breakDown),
 	hero: span(HIT.breakDown, HIT.silence),
 	social: span(HIT.silence, HIT.resolution),
 	resolution: span(HIT.resolution, HIT.endCard),

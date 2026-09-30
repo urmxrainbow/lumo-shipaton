@@ -1,0 +1,11 @@
+{
+  "source": "music.mp4",
+  "output": "assets/audio/lumo-music-edit.wav",
+  "crossfade": 0.03,
+  "segments": [
+    [5.968, 30.256],
+    [42.4, 69.753],
+    [115.241, 142.524],
+    [151.626, 159.6]
+  ]
+}

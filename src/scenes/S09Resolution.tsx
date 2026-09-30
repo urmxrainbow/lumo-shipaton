@@ -25,8 +25,8 @@ const card = (k: number): Box => ({x: X0 + k * (CW + GAP), y: Y, w: CW, h: CH});
 export const S09Resolution: React.FC = () => {
 	const f = useCurrentFrame();
 	const end = at('resolution', HIT.endCard);
-	const text = b(2.5);
-	const fold = end - b(3.5);
+	const text = b(1.25);
+	const fold = end - b(2.25);
 	const gather = ramp(f, fold, fold + 26, ease.inOut);
 	const winIn = ramp(f, fold - 4, fold + 20, ease.out);
 	const out = ramp(f, end - 14, end, ease.in);
@@ -44,8 +44,8 @@ export const S09Resolution: React.FC = () => {
 				/>
 			)}
 			{PICKS.map((i, k) => {
-				const a = b(0.25 + k * 1.25);
-				const p = ramp(f, a, a + b(1.5));
+				const a = b(k * 0.6);
+				const p = ramp(f, a, a + b(1));
 				const r = mixBox(card(k), progressTile(PROGRESS_CENTER, k, 3), gather);
 				return (
 					<div

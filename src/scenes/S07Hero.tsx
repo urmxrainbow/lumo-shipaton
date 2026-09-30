@@ -10,9 +10,8 @@
 import React from 'react';
 import {AbsoluteFill, Easing, useCurrentFrame} from 'remotion';
 import {HIT, beats as b} from '../beats';
-import {circleClip} from '../components/Screen';
 import {Memory} from '../components/Memory';
-import {Caption, Reveal} from '../components/type';
+import {Reveal} from '../components/type';
 import {at} from '../timeline';
 import {ease, mix, ramp} from '../lib/anim';
 import {C, display} from '../theme';
@@ -38,7 +37,7 @@ const ORDER: number[] = (() => {
 })();
 
 const PUSH = Easing.bezier(0.6, 0, 0.9, 0.45);
-const SIZE = 280;
+const SIZE = 300;
 
 export const S07Hero: React.FC = () => {
 	const f = useCurrentFrame();
@@ -52,27 +51,28 @@ export const S07Hero: React.FC = () => {
 	const push = ramp(f, reentry - b(1.25), reentry, PUSH);
 	const portalScale = seed * mix(1, 48, push);
 
-	// memory world
-	const open = ramp(f, reentry, reentry + 14, ease.out);
-	const pull = ramp(f, reentry + 10, land - 6, ease.inOut);
+	// the re-entry: a clean, full #E3D290 frame is the boundary. Then Day 01
+	// grows out of it as a card until it IS the frame (no black, no leftovers).
+	const held = reentry + 12;
+	const grow = ramp(f, held, held + 22, ease.inOut);
+	const world = held + 22; // the memory world takes over from the card here
+	const pull = ramp(f, world, land - 6, ease.inOut);
 	const s = cell(START);
 	const fx = mix(s.x + CW / 2, 960, pull);
 	const fy = mix(s.y + CH / 2, 540, pull);
 	// log-space zoom: from one memory filling the frame to the whole grid
 	const zFull = Math.max(1920 / CW, 1080 / CH);
 	const scale = Math.exp(mix(Math.log(zFull), Math.log(0.74), pull)) * mix(1, 0.97, ramp(f, land, end, ease.inOut));
-	const first = reentry + 16;
+	const first = world + 6;
 	const last = land - 16;
-	const dim = mix(1, 0.2, ramp(f, land - 6, land + 10, ease.inOut));
+	const dim = mix(1, 0.14, ramp(f, land - 6, land + 10, ease.inOut));
 	const out = ramp(f, end - 12, end, ease.in);
 
 	return (
 		<AbsoluteFill>
-			{/* on the re-entry the frame is #E3D290; a circle opens from it into Day 01 */}
-			{f >= reentry && open < 1 && <AbsoluteFill style={{background: C.lumo}} />}
-			{/* ——— the memory world ——— */}
-			{f >= reentry && (
-				<div style={{position: 'absolute', inset: 0, clipPath: open < 1 ? circleClip(open * 1110) : undefined, opacity: 1 - out}}>
+			{/* ——— the memory world (after the yellow boundary) ——— */}
+			{f >= world && (
+				<div style={{position: 'absolute', inset: 0, opacity: 1 - out}}>
 					<div
 						style={{
 							position: 'absolute',
@@ -83,7 +83,7 @@ export const S07Hero: React.FC = () => {
 						}}
 					>
 						{ORDER.map((ci, k) => {
-							const t = k === 0 ? reentry : first + (last - first) * Math.pow(k / (ORDER.length - 1), 0.62);
+							const t = k === 0 ? world : first + (last - first) * Math.pow(k / (ORDER.length - 1), 0.62);
 							if (f < t) return null;
 							const p = k === 0 ? 1 : ramp(f, t, t + 12);
 							const c = cell(ci);
@@ -139,30 +139,46 @@ export const S07Hero: React.FC = () => {
 					<span>&nbsp;days.</span>
 				</div>
 			)}
-			{/* ——— 30 memories. ——— */}
+			{/* ——— the yellow boundary, then Day 01 grows out of it ——— */}
+			{f >= reentry && f < world && (
+				<AbsoluteFill style={{background: C.lumo}}>
+					{grow > 0 && (
+						<div
+							style={{
+								position: 'absolute',
+								left: mix(960 - 150, 960 - (CW * zFull) / 2, grow),
+								top: mix(540 - 187.5, 540 - (CH * zFull) / 2, grow),
+								width: mix(300, CW * zFull, grow),
+								height: mix(375, CH * zFull, grow),
+								borderRadius: mix(20, 0, grow),
+								overflow: 'hidden',
+							}}
+						>
+							<Memory i={0} w={mix(300, CW * zFull, grow)} h={mix(375, CH * zFull, grow)} bare={grow < 0.6} />
+						</div>
+					)}
+				</AbsoluteFill>
+			)}
+
+			{/* ——— 30 memories. — the payoff ——— */}
 			<div
 				style={{
 					position: 'absolute',
 					left: 0,
 					right: 0,
 					top: 0,
-					bottom: 60,
+					bottom: 0,
 					display: 'flex',
 					alignItems: 'center',
 					justifyContent: 'center',
 					color: C.white,
-					...display(230, 500),
+					...display(290, 600),
 				}}
 			>
 				<Reveal p={ramp(f, land, land + 12)} out={out} rise={40}>
 					30 <span style={{color: C.lumo}}>memories.</span>
 				</Reveal>
 			</div>
-			<Caption x={0} y={700} size={36} align="center">
-				<Reveal p={ramp(f, land + b(2), land + b(2) + 16)} out={out} rise={14}>
-					Progress you can see.
-				</Reveal>
-			</Caption>
 		</AbsoluteFill>
 	);
 };

@@ -19,8 +19,8 @@ export const RADIUS = 56;
 /** A hairline that defines the UI edge on pure black (the UI is #101012). */
 export const HAIRLINE = '0 0 0 1px rgba(245,245,247,0.09)';
 
-/** The checkbox in scene 04 — the Create Goal window collapses into it. */
-export const CHECKBOX: Box = {x: 960 - 36, y: 470 - 36, w: 72, h: 72};
+/** The checkbox of the Photo Check-in sequence — the product window collapses into it. */
+export const CHECKBOX: Box = {x: 960 - 48, y: 470 - 48, w: 96, h: 96};
 
 /** The Progress window (right-hand hero placement). */
 export const PROGRESS_WINDOW: Box = {x: 1080, y: 50, w: 490, h: 980};

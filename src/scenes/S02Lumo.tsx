@@ -30,14 +30,14 @@ export const S02Lumo: React.FC = () => {
 
 	// the answer: light → icon → product
 	const light = ramp(f, reveal, reveal + 8, ease.out);
-	const bloom = ramp(f, reveal + 6, reveal + 20, ease.inOut);
-	const glide = ramp(f, reveal + b(1.5), reveal + b(3), ease.inOut);
+	const bloom = ramp(f, reveal + 4, reveal + 16, ease.inOut);
+	const glide = ramp(f, reveal + b(0.75), reveal + b(2), ease.inOut);
 	const cx = mix(960, 292, glide);
 	const cy = mix(470, 330, glide);
 	const size = mix(190, 128, glide);
-	const rise = ramp(f, reveal + b(1.75), reveal + b(3.5), ease.out);
+	const rise = ramp(f, reveal + b(0.9), reveal + b(2.25), ease.out);
 	const end = at('lumo', HIT.product);
-	const out = ramp(f, end - b(0.75), end, ease.in);
+	const out = ramp(f, end - b(0.5), end, ease.in);
 
 	return (
 		<AbsoluteFill style={{background: open < 1 ? C.lumo : C.black}}>
@@ -99,12 +99,12 @@ export const S02Lumo: React.FC = () => {
 				/>
 			)}
 			<Headline x={216} y={430} size={150} weight={600}>
-				<Reveal p={ramp(f, reveal + b(2), reveal + b(3.5))} out={out}>
+				<Reveal p={ramp(f, reveal + b(1.1), reveal + b(2.1))} out={out}>
 					Lumo
 				</Reveal>
 			</Headline>
 			<Caption x={222} y={615} size={34}>
-				<Reveal p={ramp(f, reveal + b(2.75), reveal + b(4.25))} out={out}>
+				<Reveal p={ramp(f, reveal + b(1.5), reveal + b(2.5))} out={out}>
 					A social habit tracker.
 				</Reveal>
 			</Caption>

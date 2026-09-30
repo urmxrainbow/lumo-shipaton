@@ -17,11 +17,20 @@ const files = (): string[] => {
 	return cache;
 };
 
-/** Resolved URL of a slot's recording, or null → render placeholder. */
-export const slotSrc = (id: SlotId): string | null => {
+export type SlotMedia = {url: string; kind: 'video' | 'image'};
+
+/**
+ * A slot's media in assets/recordings/: a screen recording (.mp4/.mov) or a
+ * screenshot (.png/.jpg/.webp) with the same name. Video wins if both exist.
+ * null → render the placeholder.
+ */
+export const slotSrc = (id: SlotId): SlotMedia | null => {
 	const want = `recordings/${MEDIA_SLOTS[id].file}`.toLowerCase();
-	const hit = files().find((f) => VIDEO.test(f) && f.replace(VIDEO, '').toLowerCase() === want);
-	return hit ? staticFile(hit) : null;
+	const find = (re: RegExp) => files().find((f) => re.test(f) && f.replace(re, '').toLowerCase() === want);
+	const video = find(VIDEO);
+	if (video) return {url: staticFile(video), kind: 'video'};
+	const image = find(IMAGE);
+	return image ? {url: staticFile(image), kind: 'image'} : null;
 };
 
 const inDir = (dir: string, re: RegExp) =>
