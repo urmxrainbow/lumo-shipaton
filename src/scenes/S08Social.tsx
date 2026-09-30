@@ -5,11 +5,11 @@
  * #E3D290 point. On the biggest hit of the track: "Grow together."
  */
 import React from 'react';
-import {AbsoluteFill, Easing, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, Easing, useCurrentFrame, useVideoConfig} from 'remotion';
 import {HIT, beats as b} from '../beats';
 import {HAIRLINE} from '../components/Screen';
 import {Crop, MediaSlot} from '../components/MediaSlot';
-import {Caption, Reveal} from '../components/type';
+import {Caption, Reveal, MaskLine, Stack, arrive, leave} from '../components/type';
 import {at} from '../timeline';
 import {Box, ease, mix, mixBox, ramp} from '../lib/anim';
 import {C, display} from '../theme';
@@ -29,14 +29,17 @@ const PUSH = Easing.bezier(0.6, 0, 0.9, 0.45);
 
 export const S08Social: React.FC = () => {
 	const f = useCurrentFrame();
+	const {fps} = useVideoConfig();
 	const bridge = at('social', HIT.bridge);
 	const dip = at('social', HIT.dip);
 	const grow = at('social', HIT.grow);
 	const end = at('social', HIT.resolution);
 
-	// words in the silence
-	const line = ramp(f, 2, 16);
-	const lineOut = ramp(f, bridge + b(1), bridge + b(1) + 10, ease.in);
+	// "And there's more": the line rises in and opens up (tracking widens as it settles)
+	const l1 = arrive(f, fps, 2, 16);
+	const l2 = arrive(f, fps, 9, 18);
+	const lineOut = leave(f, bridge + b(1), 11);
+	const track = (e: number) => `${mix(-0.06, -0.035, e)}em`;
 
 	// person A, then B joins
 	const aIn = ramp(f, bridge + b(1.25), bridge + b(2.75), ease.out);
@@ -54,7 +57,9 @@ export const S08Social: React.FC = () => {
 	// outgoing content, and the frame is solid #E3D290 exactly on the hit
 	const expand = ramp(f, grow - b(1.1), grow, PUSH);
 	const dotR = mix(11, 1180, expand);
-	const growIn = ramp(f, grow, grow + 10);
+	const g1 = arrive(f, fps, grow + 1, 20, {damping: 200, stiffness: 100, mass: 0.9});
+	const g2 = arrive(f, fps, grow + 6, 22, {damping: 200, stiffness: 100, mass: 0.9});
+	const liftUp = ramp(f, grow, grow + 40, ease.out);
 	// then black closes back in from the centre, ready for the resolution
 	const back = ramp(f, end - 18, end - 2, ease.inOut);
 
@@ -64,26 +69,14 @@ export const S08Social: React.FC = () => {
 
 	return (
 		<AbsoluteFill>
-			<div
-				style={{
-					position: 'absolute',
-					inset: 0,
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center',
-					justifyContent: 'center',
-					color: C.white,
-					...display(120, 500),
-					lineHeight: 1.08,
-				}}
-			>
-				<Reveal p={line} out={lineOut} rise={24}>
+			<Stack>
+				<MaskLine enter={l1} exit={lineOut} size={120} style={{letterSpacing: track(l1)}}>
 					But progress
-				</Reveal>
-				<Reveal p={ramp(f, 10, 24)} out={lineOut} rise={24}>
+				</MaskLine>
+				<MaskLine enter={l2} exit={lineOut} size={120} style={{letterSpacing: track(l2)}}>
 					feels better together.
-				</Reveal>
-			</div>
+				</MaskLine>
+			</Stack>
 
 			<div style={{position: 'absolute', inset: 0}}>
 				<MediaSlot
@@ -151,26 +144,15 @@ export const S08Social: React.FC = () => {
 			)}
 			{f >= grow && (
 				<AbsoluteFill style={{background: C.lumo}}>
-					<div
-						style={{
-							position: 'absolute',
-							inset: 0,
-							display: 'flex',
-							flexDirection: 'column',
-							alignItems: 'center',
-							justifyContent: 'center',
-							color: C.black,
-							...display(170, 600),
-							lineHeight: 1.04,
-						}}
-					>
-						<Reveal p={growIn} rise={34}>
+					{/* an emotional lift: longer travel, and the whole phrase rises as it lands */}
+					<Stack style={{transform: `translateY(${mix(34, 0, liftUp)}px)`}}>
+						<MaskLine enter={g1} size={170} weight={600} color={C.black} travel={1.45}>
 							Grow
-						</Reveal>
-						<Reveal p={ramp(f, grow + 4, grow + 14)} rise={34}>
+						</MaskLine>
+						<MaskLine enter={g2} size={170} weight={600} color={C.black} travel={1.45}>
 							together.
-						</Reveal>
-					</div>
+						</MaskLine>
+					</Stack>
 					<div
 						style={{position: 'absolute', left: 960 - back * 1110, top: 540 - back * 1110, width: back * 2220, height: back * 2220, borderRadius: '50%', background: C.black}}
 					/>

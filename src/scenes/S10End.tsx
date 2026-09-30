@@ -4,9 +4,9 @@
  * music resolves.
  */
 import React from 'react';
-import {AbsoluteFill, Img, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, Img, useCurrentFrame, useVideoConfig} from 'remotion';
 import {HIT, beats as b} from '../beats';
-import {Headline, Reveal} from '../components/type';
+import {CALM, Headline, MaskLine, Reveal, arrive} from '../components/type';
 import {brand} from '../lib/media';
 import {at} from '../timeline';
 import {ease, mix, ramp} from '../lib/anim';
@@ -16,6 +16,7 @@ const ICON = {cx: 960, cy: 340, size: 190};
 
 export const S10End: React.FC = () => {
 	const f = useCurrentFrame();
+	const {fps} = useVideoConfig();
 	const lastBar = at('endCard', HIT.finalHit) - b(4);
 	const cut = at('endCard', HIT.resolved);
 	if (f >= cut) return null; // hard cut to black
@@ -55,10 +56,15 @@ export const S10End: React.FC = () => {
 			<div style={{position: 'absolute', left: 0, right: 0, top: 612, textAlign: 'center', color: C.faint, ...text(30, 500), letterSpacing: '0.04em'}}>
 				<Reveal p={ramp(f, 30, 50)}>Social habit tracker</Reveal>
 			</div>
-			<Headline x={0} y={720} size={60} align="center" color={C.white}>
-				<Reveal p={ramp(f, lastBar, lastBar + 20)}>Your progress</Reveal>
-				<Reveal p={ramp(f, lastBar + 6, lastBar + 26)}>has a story.</Reveal>
-			</Headline>
+			{/* calm resolution: a slow, short settle — nothing else moves */}
+			<div style={{position: 'absolute', left: 0, right: 0, top: 720, display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+				<MaskLine enter={arrive(f, fps, lastBar, 30, CALM)} size={60} travel={0.9}>
+					Your progress
+				</MaskLine>
+				<MaskLine enter={arrive(f, fps, lastBar + 7, 30, CALM)} size={60} travel={0.9}>
+					has a story.
+				</MaskLine>
+			</div>
 		</AbsoluteFill>
 	);
 };

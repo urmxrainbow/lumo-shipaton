@@ -18,9 +18,11 @@
  * The film uses a MUSIC EDIT of the track: four source segments, always
  * moving FORWARD through the song, joined on downbeats of matching energy
  * and harmony (see src/music-edit.json):
- *   0:05.97–0:30.26 · 0:42.40–1:27.98 (the groove runs on past "30 memories"
- *   into the next phrase: "Better together") · 2:10.43–2:22.52 (pre-drop bar
- *   → the final lift: "Grow together") · 2:31.63–2:39.6 (ending). Every visual moment below is expressed as
+ *   0:05.97–0:30.26 · 0:42.40–1:12.80 · 1:15.84–1:27.98 (the groove runs on
+ *   past "30 memories" into its next phrase, "Better together"; one repeated
+ *   groove bar, 1:12.80–1:15.84, is left out so the yellow bridge is a single
+ *   bar) · 2:10.43–2:22.52 (pre-drop bar → the final lift: "Grow together")
+ *   · 2:31.63–2:39.6 (ending). Every visual moment below is expressed as
  * a SOURCE time in the track and mapped onto the film, so the picture is
  * locked to the music.
  */
@@ -78,9 +80,9 @@ export const HIT = {
 	progressShot: 51.525, // progress.jpg: one check-in opens into Insights — "See how far you’ve come."
 	memoriesBuild: 55.325, // real memories: 1 → 2 → 4 → 5
 	breakDown: 60.627, // BREAK — "30 days."
-	reentry: 63.669, // RE-ENTRY — the frame is #E3D290
-	thirtyMemories: 69.753, // downbeat: "30 memories."
-	silence: 75.836, // the NEXT 4-bar phrase of the same groove — "But progress feels better together."
+	reentry: 63.669, // RE-ENTRY — the frame is #E3D290: "Keep showing up."
+	thirtyMemories: 66.711, // next downbeat: "30 memories."
+	silence: 75.836, // edit join (downbeat), the NEXT 4-bar phrase of the same groove — "But progress feels better together."
 	bridge: 78.112, // shared goal (3 beats later)
 	dip: 131.17, // pre-drop bar (edit join at 2:10.43)
 	grow: 133.445, // biggest hit — #E3D290 frame: "Grow together."

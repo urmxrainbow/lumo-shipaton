@@ -5,15 +5,17 @@
  *  bar 2  (edit join) the check becomes the real Photo Check-in window.
  *         photo-checkin.MOV plays at real speed: tap Check in → camera …
  *  bar 3  … the shutter lands on the downbeat → ✓ → Breakfast checked.
- *  bar 4  "Every check-in means something."
+ *  bar 4  "Every check-in" → "means" → "something." — built, not shown:
+ *         each part rises through its mask on the beat; the first lines
+ *         make room as "something." lands largest.
  * Nothing is laid over the recording: the product is the visual.
  */
 import React from 'react';
-import {AbsoluteFill, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, useCurrentFrame, useVideoConfig} from 'remotion';
 import {HIT, beats as b} from '../beats';
 import {CHECKBOX, HAIRLINE} from '../components/Screen';
 import {Crop, MediaSlot, mixCrop, slotPoint} from '../components/MediaSlot';
-import {Headline, Reveal} from '../components/type';
+import {Headline, MaskLine, Reveal, Stack, arrive, leave} from '../components/type';
 import {at} from '../timeline';
 import {Box, ease, mix, mixBox, ramp} from '../lib/anim';
 import {C, display} from '../theme';
@@ -58,6 +60,7 @@ const Centre: React.FC<{size: number; weight?: 500 | 600; color?: string; childr
 
 export const S04CheckIn: React.FC = () => {
 	const f = useCurrentFrame();
+	const {fps} = useVideoConfig();
 	const join = at('checkin', HIT.intoCheckin);
 	const shutter = at('checkin', HIT.shutter);
 	const line = at('checkin', HIT.everyLine);
@@ -81,6 +84,13 @@ export const S04CheckIn: React.FC = () => {
 
 	// ——— bar 4: the line ———
 	const winOut = ramp(f, line - 6, line + 10, ease.inOut);
+	const e1 = arrive(f, fps, line + 6, 16); // after the recording has cleared
+	const e2 = arrive(f, fps, line + b(1) - 7, 16);
+	const e3 = arrive(f, fps, line + b(2) - 8, 18);
+	const sLand = arrive(f, fps, line + b(2) - 8, 20); // the first lines make room
+	const x1 = leave(f, end - 12, 10);
+	const x2 = leave(f, end - 11, 10);
+	const x3 = leave(f, end - 10, 10);
 
 	const at0 = (s: number) => start + Math.round(s * 30);
 	// sheet rises at 0.5 s, closes at ~3.05 s in the recording
@@ -170,14 +180,22 @@ export const S04CheckIn: React.FC = () => {
 					check-in.
 				</Reveal>
 			</Headline>
-			<Centre size={150} weight={600}>
-				<Reveal p={ramp(f, line + 4, line + 16)} out={ramp(f, end - 10, end, ease.in)} rise={34}>
-					Every check-in
-				</Reveal>
-				<Reveal p={ramp(f, line + 8, line + 20)} out={ramp(f, end - 10, end, ease.in)} rise={34}>
-					means <span style={{color: C.lumo}}>something.</span>
-				</Reveal>
-			</Centre>
+			{/* the hero statement, built in three steps on the beat */}
+			{f >= line && (
+				<Stack style={{transform: `translateY(${mix(118, 0, sLand)}px)`}}>
+					<MaskLine enter={e1} exit={x1} size={112} weight={500}>
+						Every check-in
+					</MaskLine>
+					<MaskLine enter={e2} exit={x2} size={112} weight={500} color={C.soft}>
+						means
+					</MaskLine>
+					<div style={{marginTop: 14}}>
+						<MaskLine enter={e3} exit={x3} size={220} weight={600} color={C.lumo} travel={1.1}>
+							something.
+						</MaskLine>
+					</div>
+				</Stack>
+			)}
 		</AbsoluteFill>
 	);
 };
