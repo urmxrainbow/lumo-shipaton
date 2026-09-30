@@ -6,12 +6,13 @@
 import React from 'react';
 import {Img} from 'remotion';
 import {MEMORIES, MEMORY_VIEW} from '../media.config';
-import {memoryName, memorySrc} from '../lib/media';
+import {memoryDay, memorySrc} from '../lib/media';
 import {C, text} from '../theme';
 
 type Props = {
 	set?: keyof typeof MEMORIES;
-	i: number;
+	/** File stem of the photo (from memoryManifest), e.g. "day15". */
+	name: string;
 	w: number;
 	h: number;
 	/** Photo zoom inside its frame (slow push-ins). */
@@ -22,10 +23,8 @@ type Props = {
 	bare?: boolean;
 };
 
-export const dayOf = (i: number) => String(i + 1).padStart(2, '0');
-
-export const Memory: React.FC<Props> = ({set = 'a', i, w, h, zoom = 1, radius = 0, style, bare}) => {
-	const src = memorySrc(set, i);
+export const Memory: React.FC<Props> = ({set = 'a', name, w, h, zoom = 1, radius = 0, style, bare}) => {
+	const src = memorySrc(name, set);
 	const box: React.CSSProperties = {position: 'relative', width: w, height: h, overflow: 'hidden', borderRadius: radius, ...style};
 	if (src) {
 		return (
@@ -37,7 +36,7 @@ export const Memory: React.FC<Props> = ({set = 'a', i, w, h, zoom = 1, radius = 
 						height: '100%',
 						objectFit: 'cover',
 						transform: `scale(${zoom})`,
-						objectViewBox: MEMORY_VIEW[memoryName(set, i) ?? ''],
+						objectViewBox: MEMORY_VIEW[name],
 					}}
 				/>
 			</div>
@@ -60,7 +59,7 @@ export const Memory: React.FC<Props> = ({set = 'a', i, w, h, zoom = 1, radius = 
 					}}
 				>
 					<div style={{...text(Math.max(12, m * 0.07), 500)}}>
-						{set === 'b' ? 'Partner · ' : ''}Day {dayOf(i)}
+						{set === 'b' ? 'Partner · ' : ''}{memoryDay(name)}
 					</div>
 					<div style={{...text(Math.max(9, m * 0.042)), opacity: 0.7}}>photo</div>
 				</div>

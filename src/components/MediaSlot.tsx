@@ -130,7 +130,7 @@ export const MediaSlot: React.FC<Props> = ({
 							width: '100%',
 							height: '100%',
 							objectFit: 'fill',
-							transform: `scale(${1 + 0.035 * stillDrift})`,
+							transform: `scale(${1 + 0.04 * stillDrift})`,
 							transformOrigin: `${crop.x * 100}% ${crop.y * 100}%`,
 						}}
 					/>

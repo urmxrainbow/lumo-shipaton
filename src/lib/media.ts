@@ -1,5 +1,5 @@
 import {getStaticFiles, staticFile} from 'remotion';
-import {MEDIA_SLOTS, MEMORIES, MUSIC_DIR, SlotId} from '../media.config';
+import {MEDIA_SLOTS, MEMORIES, MUSIC_DIR, SlotConfig, SlotId} from '../media.config';
 
 const VIDEO = /\.(mp4|mov|m4v|webm)$/i;
 const IMAGE = /\.(jpe?g|png|webp|avif)$/i;
@@ -21,13 +21,14 @@ export type SlotMedia = {url: string; kind: 'video' | 'image'};
 
 /**
  * A slot's media in assets/recordings/: a screen recording (.mp4/.mov) or a
- * screenshot (.png/.jpg/.webp) with the same name. Video wins if both exist.
+ * screenshot (.png/.jpg/.webp) with the same name. Video wins if both exist,
+ * unless the slot sets `media: 'image'`.
  * null → render the placeholder.
  */
 export const slotSrc = (id: SlotId): SlotMedia | null => {
 	const want = `recordings/${MEDIA_SLOTS[id].file}`.toLowerCase();
 	const find = (re: RegExp) => files().find((f) => re.test(f) && f.replace(re, '').toLowerCase() === want);
-	const video = find(VIDEO);
+	const video = (MEDIA_SLOTS[id] as SlotConfig).media === 'image' ? undefined : find(VIDEO);
 	if (video) return {url: staticFile(video), kind: 'video'};
 	const image = find(IMAGE);
 	return image ? {url: staticFile(image), kind: 'image'} : null;
@@ -38,26 +39,19 @@ const inDir = (dir: string, re: RegExp) =>
 		.filter((f) => f.startsWith(`${dir}/`) && re.test(f))
 		.sort((x, y) => x.localeCompare(y, undefined, {numeric: true}));
 
-/** Memory photo URL by index (wraps if fewer photos than slots), or null. */
-export const memorySrc = (set: keyof typeof MEMORIES, i: number): string | null => {
-	const list = inDir(MEMORIES[set].dir, IMAGE);
-	if (!list.length) return null;
-	return staticFile(list[i % list.length]);
+/** File stems of all real memory photos (e.g. "day15"), in filename order. */
+export const memoryNames = (set: keyof typeof MEMORIES = 'a'): string[] =>
+	inDir(MEMORIES[set].dir, IMAGE).map((f) => (f.split('/').pop() ?? '').replace(IMAGE, ''));
+
+/** A memory photo's URL by file stem, or null. Never wraps or substitutes. */
+export const memorySrc = (name: string, set: keyof typeof MEMORIES = 'a'): string | null => {
+	const hit = inDir(MEMORIES[set].dir, IMAGE).find((f) => (f.split('/').pop() ?? '').replace(IMAGE, '') === name);
+	return hit ? staticFile(hit) : null;
 };
 
-/** File stem of a memory photo (e.g. "day15"), or null. */
-export const memoryName = (set: keyof typeof MEMORIES, i: number): string | null => {
-	const list = inDir(MEMORIES[set].dir, IMAGE);
-	if (!list.length) return null;
-	return (list[i % list.length].split('/').pop() ?? '').replace(IMAGE, '');
-};
-
-/** How many real memory photos exist. */
-export const memoryCount = (set: keyof typeof MEMORIES) => inDir(MEMORIES[set].dir, IMAGE).length;
-
-/** "Day 15" from a file named day15.jpg. */
-export const memoryDay = (set: keyof typeof MEMORIES, i: number): string => {
-	const m = memoryName(set, i)?.match(/(\d+)/);
+/** "Day 15" from a photo named day15. */
+export const memoryDay = (name: string): string => {
+	const m = name.match(/(\d+)/);
 	return m ? `Day ${m[1].padStart(2, '0')}` : '';
 };
 

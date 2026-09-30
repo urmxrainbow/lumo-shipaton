@@ -32,7 +32,7 @@ Times like **0:30** refer to the current cut, which is locked to the music edit 
 | 01 HOME | `home.MP4` | ✅ Real footage in use |
 | 02 CREATE GOAL | `create-goal.mov` | ✅ Real footage in use |
 | 03 PHOTO CHECK-IN | `photo-checkin.mp4` | ⬜ **Record** |
-| 04 PROGRESS | `progress.png` (screenshot) or `progress.mp4` | ⬜ **Add** |
+| 04 PROGRESS | `progress.jpg` (Insights screenshot — used as a still beauty shot) | ✅ In use |
 | 05A SHARED GOAL · PERSON A | `shared-goal-a.png` (screenshot) or `.mp4` | ⬜ **Add** |
 | 05B SHARED GOAL · PERSON B | `shared-goal-b.png` (screenshot) or `.mp4` | ⬜ **Add** |
 | Memory photos | `assets/memories/day01.jpg` … `day30.jpg` | ⬜ **Add** |
@@ -65,7 +65,7 @@ Times like **0:30** refer to the current cut, which is locked to the music edit 
 
 | | |
 |---|---|
-| **1. Filename** | `assets/recordings/progress.png` (screenshot) or `progress.mp4` (recording) |
+| **1. Filename** | `assets/recordings/progress.jpg` (screenshot; the slot is set to `media: 'image'`, so `progress.mp4` is ignored) |
 | **2. Lumo screen** | The screen where a habit's **photo check-ins become visual progress / memories** |
 | **3. Starting state** | That screen at the **top**, fully loaded, with **as many real photos visible as possible** |
 | **4. Action** | Hold → one slow, continuous scroll → hold |

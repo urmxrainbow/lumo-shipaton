@@ -34,6 +34,8 @@ export type SlotConfig = {
 	source: {w: number; h: number};
 	/** Fraction of the source height hidden at the top (status bar / recording pill). */
 	safeTop: number;
+	/** 'image' → use the screenshot even if a recording with the same name exists. */
+	media?: 'image';
 	clips: Record<string, Clip>;
 	/** Shown on the placeholder so you know what to record. */
 	needs: string;
@@ -87,15 +89,15 @@ export const MEDIA_SLOTS = {
 	progress: {
 		number: '04',
 		label: 'Progress',
-		file: 'progress', // assets/recordings/progress.mp4 (Insights)
-		source: IPHONE,
-		safeTop: 0.065,
+		file: 'progress', // assets/recordings/progress.jpg (Insights · photo calendar)
+		media: 'image', // the still replaces progress.mp4
+		source: {w: 1320, h: 2215},
+		safeTop: 0,
 		clips: {
-			// 4.6 All habits · 5.4 Breakfast expands · 5.6–6.2 photo calendar
-			calendar: {in: 4.6, out: 6.2},
-			hold: {in: 6.0, out: 6.0}, // the September photo calendar
+			// a still: the beauty shot pushes 1.00 → 1.04 across the Progress section
+			shot: {in: 0, out: 3.8},
 		},
-		needs: 'Progress / photo calendar.',
+		needs: 'Insights: habit stats + month photo calendar (screenshot).',
 	},
 	sharedGoalA: {
 		number: '05A',

@@ -1,13 +1,15 @@
 /**
- * 08 · RESOLUTION — slower again. A few memories, large. "Progress you
- * can look back on." Then the memories return into Lumo: they fly into
- * the Progress window, where your progress lives.
+ * 08 · RESOLUTION — slower again. The strongest memories, held back until
+ * now (memoryManifest 'ending'), large. "Progress you can look back on."
+ * Then they return into Lumo: each folds into a day of the real Progress
+ * calendar (progress.jpg) and dissolves into it.
  */
 import React from 'react';
 import {AbsoluteFill, useCurrentFrame} from 'remotion';
 import {HIT, beats as b} from '../beats';
-import {HAIRLINE, progressTile} from '../components/Screen';
-import {CALENDAR, PROGRESS_RAD, PROGRESS_SHOT} from './S05Progress';
+import {HAIRLINE} from '../components/Screen';
+import {CELL, PROGRESS_CROP, PROGRESS_RAD, PROGRESS_SHOT, cellBox} from './S05Progress';
+import {memoriesFor} from '../memoryManifest';
 import {MediaSlot} from '../components/MediaSlot';
 import {Memory} from '../components/Memory';
 import {Reveal} from '../components/type';
@@ -15,7 +17,8 @@ import {at} from '../timeline';
 import {Box, ease, mix, mixBox, ramp} from '../lib/anim';
 import {C, display} from '../theme';
 
-const PICKS = [0, 2, 3]; // day01, day15, day16 — the strongest real memories
+const PICKS = memoriesFor('ending').slice(0, 3);
+const LAND = [CELL.d30, CELL.d31, CELL.today]; // where each folds into the calendar
 const CW = 460;
 const CH = 575;
 const GAP = 56;
@@ -38,21 +41,21 @@ export const S09Resolution: React.FC = () => {
 			{winIn > 0 && (
 				<MediaSlot
 					id="progress"
-					clip="hold"
-					playhead={0}
+					clip="shot"
+					playhead={999}
 					{...HOME_BOX}
-					crop={CALENDAR}
+					crop={PROGRESS_CROP}
 					radius={PROGRESS_RAD}
 					style={{opacity: winIn, transform: `translateY(${(1 - winIn) * 40}px)`, boxShadow: HAIRLINE}}
 				/>
 			)}
-			{PICKS.map((i, k) => {
+			{PICKS.map((name, k) => {
 				const a = b(k * 0.6);
 				const p = ramp(f, a, a + b(1));
-				const r = mixBox(card(k), progressTile({...HOME_BOX, y: HOME_BOX.y + 120}, k, 3), gather);
+				const r = mixBox(card(k), cellBox({...HOME_BOX, y: HOME_BOX.y + 40 * (1 - winIn)}, LAND[k]), gather);
 				return (
 					<div
-						key={i}
+						key={name}
 						style={{
 							position: 'absolute',
 							left: r.x,
@@ -65,7 +68,7 @@ export const S09Resolution: React.FC = () => {
 							overflow: 'hidden',
 						}}
 					>
-						<Memory i={i} w={r.w} h={r.h} zoom={mix(1.08, 1, ramp(f, a, fold, ease.out))} bare={gather > 0.2} />
+						<Memory name={name} w={r.w} h={r.h} zoom={mix(1.08, 1, ramp(f, a, fold, ease.out))} bare={gather > 0.2} />
 					</div>
 				);
 			})}
@@ -82,10 +85,10 @@ export const S09Resolution: React.FC = () => {
 				}}
 			>
 				<Reveal p={ramp(f, text, text + 22)} out={ramp(f, fold - 12, fold, ease.in)}>
-					See how far
+					Progress you can
 				</Reveal>
 				<Reveal p={ramp(f, text + 10, text + 32)} out={ramp(f, fold - 12, fold, ease.in)}>
-					you’ve come.
+					look back on.
 				</Reveal>
 			</div>
 		</AbsoluteFill>

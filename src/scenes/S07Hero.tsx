@@ -3,16 +3,20 @@
  *
  * BREAK: "30 days." — huge, alone. A #E3D290 circle appears inside the 0
  * and grows through the frame, ABOVE everything, so the screen is clean
- * #E3D290 exactly on the RE-ENTRY. Held. Then Day 01 grows out of the
- * yellow until it IS the frame; the camera pulls back and the real
- * memories arrive beside it. On the next phrase: "30 memories."
+ * #E3D290 exactly on the RE-ENTRY. Held. Then memories not seen before
+ * (memoryManifest 'hero') grow out of the yellow until they ARE the frame;
+ * the camera pulls back. With no unseen photo left, the real month of
+ * photo check-ins (the calendar in progress.jpg) plays that part — no
+ * photo is repeated. On the next phrase: "30 memories." — the type carries
+ * the 30.
  */
 import React from 'react';
 import {AbsoluteFill, Easing, useCurrentFrame} from 'remotion';
 import {HIT, beats as b} from '../beats';
 import {Memory} from '../components/Memory';
 import {Reveal} from '../components/type';
-import {memoryCount} from '../lib/media';
+import {memoriesFor} from '../memoryManifest';
+import {MediaSlot} from '../components/MediaSlot';
 import {at} from '../timeline';
 import {ease, mix, ramp} from '../lib/anim';
 import {C, display} from '../theme';
@@ -21,17 +25,34 @@ const PUSH = Easing.bezier(0.6, 0, 0.9, 0.45);
 const SIZE = 320;
 
 // the row of real memories (same rhythm as the memory build)
-const CW = 300;
+const CW = 300; // with a single photo the card lands larger (see cw)
 const CH = CW * (16 / 9);
 const GAP = 30;
-const cell = (k: number, n: number) => {
-	const total = n * CW + (n - 1) * GAP;
-	return {x: 960 - total / 2 + k * (CW + GAP), y: 540 - CH / 2};
+const cell = (k: number, n: number, cw: number, ch: number) => {
+	const total = n * cw + (n - 1) * GAP;
+	return {x: 960 - total / 2 + k * (cw + GAP), y: 540 - ch / 2};
 };
+
+/** The month of real check-ins inside progress.jpg — the calendar alone. */
+const MONTH = {size: 780, crop: {x: 0.5, y: 0.675, zoom: 1.12}, radius: 28};
+
+/** One tile of the reveal: an unseen memory, or (none left) the real month. */
+const Tile: React.FC<{name?: string; w: number; h: number; radius: number}> = ({name, w, h, radius}) =>
+	name ? (
+		<Memory name={name} w={w} h={h} radius={radius} />
+	) : (
+		<MediaSlot id="progress" clip="shot" playhead={999} x={0} y={0} w={w} h={h} crop={MONTH.crop} radius={radius} />
+	);
 
 export const S07Hero: React.FC = () => {
 	const f = useCurrentFrame();
-	const N = Math.min(5, Math.max(1, memoryCount('a')));
+	const photos = memoriesFor('hero');
+	const month = photos.length === 0;
+	const N = Math.max(1, photos.length);
+	const cw = month ? MONTH.size : N === 1 ? 440 : CW;
+	const ch = month ? MONTH.size : cw * (CH / CW);
+	const w0 = 300; // the card that grows out of the yellow
+	const h0 = w0 * (ch / cw);
 	const reentry = at('hero', HIT.reentry);
 	const land = at('hero', HIT.thirtyMemories);
 	const end = at('hero', HIT.silence);
@@ -42,15 +63,15 @@ export const S07Hero: React.FC = () => {
 	const push = ramp(f, reentry - b(1.25), reentry, PUSH);
 	const portalScale = seed * mix(1, 52, push);
 
-	// the yellow boundary → Day 01 grows out of it → the memory world
+	// the yellow boundary → the first tile grows out of it → the world
 	const held = reentry + 12;
 	const grow = ramp(f, held, held + 22, ease.inOut);
 	const world = held + 22;
-	const c0 = cell(0, N);
-	const zFull = Math.max(1920 / CW, 1080 / CH);
+	const c0 = cell(0, N, cw, ch);
+	const zFull = Math.max(1920 / cw, 1080 / ch);
 	const pull = ramp(f, world, land - 8, ease.inOut);
-	const fx = mix(c0.x + CW / 2, 960, pull);
-	const fy = mix(c0.y + CH / 2, 540, pull);
+	const fx = mix(c0.x + cw / 2, 960, pull);
+	const fy = mix(c0.y + ch / 2, 540, pull);
 	const scale = Math.exp(mix(Math.log(zFull), Math.log(1), pull)) * mix(1, 0.94, ramp(f, land, end, ease.inOut));
 	const dim = mix(1, 0.22, ramp(f, land - 6, land + 10, ease.inOut));
 	const out = ramp(f, end - 12, end, ease.in);
@@ -73,13 +94,13 @@ export const S07Hero: React.FC = () => {
 							const t = k === 0 ? world : mix(world + 30, land - 30, Math.pow((k - 1) / Math.max(1, N - 2), 0.8));
 							if (f < t) return null;
 							const p = k === 0 ? 1 : ramp(f, t, t + 16);
-							const c = cell(k, N);
+							const c = cell(k, N, cw, ch);
 							return (
 								<div
 									key={k}
-									style={{position: 'absolute', left: c.x, top: c.y, width: CW, height: CH, opacity: p, transform: `scale(${mix(0.95, 1, p)})`}}
+									style={{position: 'absolute', left: c.x, top: c.y, width: cw, height: ch, opacity: p, transform: `scale(${mix(0.95, 1, p)})`}}
 								>
-									<Memory i={k} w={CW} h={CH} radius={mix(0, 16, pull)} />
+									<Tile name={photos[k]} w={cw} h={ch} radius={mix(0, month ? MONTH.radius : 16, pull)} />
 								</div>
 							);
 						})}
@@ -87,22 +108,22 @@ export const S07Hero: React.FC = () => {
 				</div>
 			)}
 
-			{/* ——— the yellow boundary, then Day 01 grows out of it ——— */}
+			{/* ——— the yellow boundary, then the first tile grows out of it ——— */}
 			{f >= reentry && f < world && (
 				<AbsoluteFill style={{background: C.lumo}}>
 					{grow > 0 && (
 						<div
 							style={{
 								position: 'absolute',
-								left: mix(960 - 150, 960 - (CW * zFull) / 2, grow),
-								top: mix(540 - 267, 540 - (CH * zFull) / 2, grow),
-								width: mix(300, CW * zFull, grow),
-								height: mix(534, CH * zFull, grow),
+								left: mix(960 - w0 / 2, 960 - (cw * zFull) / 2, grow),
+								top: mix(540 - h0 / 2, 540 - (ch * zFull) / 2, grow),
+								width: mix(w0, cw * zFull, grow),
+								height: mix(h0, ch * zFull, grow),
 								borderRadius: mix(16, 0, grow),
 								overflow: 'hidden',
 							}}
 						>
-							<Memory i={0} w={mix(300, CW * zFull, grow)} h={mix(534, CH * zFull, grow)} />
+							<Tile name={photos[0]} w={mix(w0, cw * zFull, grow)} h={mix(h0, ch * zFull, grow)} radius={0} />
 						</div>
 					)}
 				</AbsoluteFill>

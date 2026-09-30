@@ -68,7 +68,7 @@ export const HIT = {
 	intoCheckin: 42.4, // edit join (downbeat): the check becomes the real Photo Check-in
 	shutter: 45.441, // downbeat: the shutter press in photo-checkin.MOV lands here
 	everyLine: 48.483, // "Every check-in means something."
-	progressShot: 51.525, // progress.mp4: the photo calendar — "Look back."
+	progressShot: 51.525, // progress.jpg: one check-in opens into Insights — "See how far you’ve come."
 	memoriesBuild: 55.325, // real memories: 1 → 2 → 4 → 5
 	breakDown: 60.627, // BREAK — "30 days."
 	reentry: 63.669, // RE-ENTRY — the frame is #E3D290
