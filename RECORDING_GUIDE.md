@@ -11,7 +11,7 @@ Every product window in the film is a fixed **MediaSlot**. Its position, size, c
 
 If a take's timing is slightly off, don't re-record. Adjust that clip's `in` / `out` seconds in `src/media.config.ts`. That changes which part of the take is shown, never the film.
 
-Times like **0:24** refer to the current preview (placeholder 120 BPM grid). They will shift slightly once the music is in, but the durations won't.
+Times like **0:30** refer to the current cut, which is locked to the music edit in `src/beats.ts`.
 
 ---
 
@@ -36,7 +36,7 @@ Times like **0:24** refer to the current preview (placeholder 120 BPM grid). The
 | 05A SHARED GOAL · PERSON A | `shared-goal-a.mp4` | ⬜ **Record** |
 | 05B SHARED GOAL · PERSON B | `shared-goal-b.mp4` | ⬜ **Record** |
 | Memory photos | `assets/memories/day01.jpg` … `day30.jpg` | ⬜ **Add** |
-| Music | `assets/audio/<track>` | ⬜ **Add** |
+| Music | `assets/audio/music.m4a` | ✅ In use (music edit in `src/beats.ts`) |
 | SF Pro (optional) | `assets/fonts/sf-pro/*.otf` | ⬜ Inter stands in until added |
 
 **How to read a placeholder in the preview:** each empty window is drawn at its real size and position. The faint lines with **10 %–90 %** labels show which part of the recording will be visible. The **soft ring** marks the point the crop is centred on.
@@ -57,9 +57,9 @@ Times like **0:24** refer to the current preview (placeholder 120 BPM grid). The
 | **8. Still before the action** | **1.0 s** (tap Check in at 1.0 s) |
 | **9. Still after the action** | Camera steady from **2.0 s**, shutter at about **2.9 s**, then **keep the captured photo on screen, untouched, until at least 3.6 s**. That exact frame becomes "Day 01". Then hold the final state for 2 s. |
 | **10. Minimum raw length** | **8 s** |
-| **11. What the film uses** | **About 2.5 s.** In "Capture it." (about 0:31–0:34), a photo opens into this window. It plays the tap (1.0–1.6 s), then the capture (2.0–3.6 s at 1.2×), and holds on the captured photo. At 0:34 that frame shrinks into the first "Day 01" card. |
-| **12. Crop / zoom** | Window **460 × 960 px, portrait, 56 px corners, right side of frame**. Shows about **97 % of the width, the full height below the status bar**. No zoom. |
-| **13. Must stay visible** | The Check in pill (start), the viewfinder, the shutter, and the **captured photo** (end). |
+| **11. What the film uses** | **About 2.5 s.** After "Show up." taps **Check in** on Home (≈0:29), this window plays the tap (1.0–1.6 s). On "Capture it." (0:30.3) it plays the capture (2.0–3.6 s at 1.2×), with the shutter at ≈0:31. The captured photo then lifts out of the UI and fills the whole frame on the 0:33.3 downbeat. |
+| **12. Crop / zoom** | Window **720 × 960 px, 56 px corners, right side of frame**. Shows the **full width and the middle ~60 % of the height (about 20–80 % down)**. The film lifts the captured photo from the area **10–90 % across, 13–73 % down** of that window. |
+| **13. Must stay visible** | The viewfinder, the shutter, and the **captured photo**, all in the **middle of the screen (20–80 % down)**. |
 
 ## 04 · PROGRESS
 
@@ -75,9 +75,9 @@ Times like **0:24** refer to the current preview (placeholder 120 BPM grid). The
 | **8. Still before the action** | **1.0 s**. The frame at 1.0 s is used as a still, so the screen must look perfect then. |
 | **9. Still after the action** | **2 s** |
 | **10. Minimum raw length** | **8 s** |
-| **11. What the film uses** | **About 8 s total.** At the end of "Showing up" (0:38.5–0:40) the six day-photos fly into this window, showing the still at 1.0 s. In "Look how far you've come." (0:40–0:48) it plays the scroll from 1.0 s to 5.0 s at 1×, then holds on the 5.0 s frame. |
-| **12. Crop / zoom** | Window **490 × 980 px, 56 px corners, right side**. Shows the **whole screen** (about 99 %). A very slow scale of 1.00 → 1.025. Nothing is drawn over it. |
-| **13. Must stay visible** | The photo grid or timeline. The flying photos land in a **3-column grid starting about 25 % down the window**. If your layout differs, tell me and I'll re-aim them. |
+| **11. What the film uses** | **About 6 s total.** On "Look back." (0:42.4–0:45.4) sixteen memories fly into this window, and it plays the scroll from 1.0 s. In the resolution (≈1:24–1:28) the window rises again in the centre, showing the still at 1.0 s, as the last memories return into it. |
+| **12. Crop / zoom** | Window **490 × 980 px, 56 px corners** (right side on "Look back.", centred in the resolution). Shows the **whole screen** (about 99 %). Nothing is drawn over it. |
+| **13. Must stay visible** | The photo grid or timeline. The flying photos land in a **4-column grid (3-column at the end) starting about 25 % down the window**. If your layout differs, tell me and I'll re-aim them. |
 
 ## 05A · SHARED GOAL, PERSON A
 
@@ -93,8 +93,8 @@ Times like **0:24** refer to the current preview (placeholder 120 BPM grid). The
 | **8. Still before the action** | **1.0 s** |
 | **9. Still after the action** | **2 s** |
 | **10. Minimum raw length** | **7 s** |
-| **11. What the film uses** | 1.0–4.0 s at 1×, holding on the last frame. In "Better together." this window rises at about **1:07** and stays until about **1:11.5**, captioned "My progress". |
-| **12. Crop / zoom** | Window **420 × 800 px, 48 px corners, left of centre**. Shows the **full width and about 94 % of the height** (a sliver trimmed top and bottom). |
+| **11. What the film uses** | 1.0–4.0 s at 1×, holding on the last frame. On the warm bridge of the track, this window rises **alone, centred** at about **1:04.6**, captioned "My progress". At about 1:07.6 it slides left as B joins. It stays until about **1:15**. |
+| **12. Crop / zoom** | Window **420 × 800 px, 48 px corners**, first centred, then left of centre. Shows the **full width and about 94 % of the height** (a sliver trimmed top and bottom). |
 | **13. Must stay visible** | Both people's names / avatars and photo check-ins in the **middle 90 %** of the screen |
 
 ## 05B · SHARED GOAL, PERSON B
@@ -104,7 +104,7 @@ Same as 05A, **recorded from Person B's account on the same shared goal**.
 | | |
 |---|---|
 | **1. Filename** | `assets/recordings/shared-goal-b.mp4` |
-| **11. What the film uses** | 1.0–4.0 s. It rises about **1 s after A**, captioned "Your progress". A single #E3D290 line then joins the two windows: "Our goal". |
+| **11. What the film uses** | 1.0–4.0 s. It glides in from the right at about **1:07.6**, captioned "Your progress". Two #E3D290 lines then reach from both windows and meet in one point: "Our goal" (≈1:11). |
 | **12. Crop / zoom** | Window **420 × 800 px, right of centre**, otherwise identical to A |
 | **13. Must stay visible** | Ideally a check-in by B that also appears in A's view, so the two windows visibly belong to one goal |
 
@@ -113,20 +113,19 @@ Same as 05A, **recorded from Person B's account on the same shared goal**.
 ## Already in use
 
 ### 01 · HOME: `home.MP4` ✅
-The product beauty shot (0:13–0:16) beside "Lumo / A social habit tracker." It shows the **full width** of Home, framed from **"Today's habit" down** (the lower 59 % of the screen). The stats card at the top of Home is never shown. A re-take with AssistiveTouch off would remove the grey button at the bottom right.
+The product beauty shot (0:19–0:24) beside "Lumo / A social habit tracker.", showing the **full width** of Home framed from **"Today's habit" down**. In "Show up." (0:27–0:29) the camera pushes 2× onto the **Check in** pill, and a thin #E3D290 ring marks the tap. The stats card at the top of Home is never shown. A re-take with AssistiveTouch off would remove the grey button at the bottom right.
 
 ### 02 · CREATE GOAL: `create-goal.mov` ✅
-"Start with a goal." (0:16–0:24). The Home window grows into this window, and the crop stays full width so every line of UI reads.
+"Set a goal." (0:24.2–0:27.2). The Home window grows into this window, and the crop stays full width so every line of UI reads.
 
 | Clip | Source | Use |
 |---|---|---|
 | `openForm` | 2.57–2.90 s | New habit sheet |
-| `typing` | 5.35–7.45 s at 1.1× | "Workout" typed, suggested emoji |
+| `typing` | 5.35–7.45 s at 1.6× | "Workout" typed, suggested emoji |
 | `tapCreate` | 9.70–10.10 s | **Create habit** tap, marked by a single thin #E3D290 ring |
-| `added` | 11.58–13.00 s at 1× | The new habit on the path |
+| `added` | 11.58–13.00 s at 1.6× | The new habit on the path |
 | *cut* | 1.80–2.55, 2.90–5.35, 10.66–11.58 s | Dead time and the keyboard switch |
 
-At the end the window collapses into the checkbox of the next scene.
 
 ---
 
@@ -136,15 +135,15 @@ At the end the window collapses into the checkbox of the next scene.
 - **30 photos** is ideal. With fewer, they repeat.
 - Real photo check-ins from one habit (workouts work well), full colour, originals. At least **1600 px** on the long edge. Portrait or square.
 - **Where they appear:**
-  - `day01` is the checkbox that becomes a photo, and the first "Day 01".
-  - Days 01, 04, 09, 16, 23 and 30 form the "Showing up" row.
-  - All 30 appear in the hero grid (Day 01 first, at the centre).
+  - `day01` is the photo captured in "Capture it." that fills the frame, and the first memory.
+  - Days 01–16 build up in "Keep showing up." (1 → 2 → 4 → 8 → 16).
+  - All 30 appear in the hero grid (Day 01 first, at the centre, revealed through the "0").
   - Days 01, 15 and 30 appear in "Progress you can look back on."
 - `assets/memories-b/` (partner photos) is **not used** in the current cut. Not needed.
 
 ## Music
 
-Put one licensed track in `assets/audio/`. I'll analyse it, set `BPM` / `OFFSET` in `src/beats.ts`, and align the seven sections (quiet → build → product → lift → hero → connection → resolution) to its real phrase changes.
+✅ In use: `assets/audio/music.m4a` (the audio of `music.mp4`, 79.1 BPM). The film plays a four-segment **music edit** cut on downbeats (`EDIT` in `src/beats.ts`), and every scene is cut on named moments of the track (`HIT`).
 
 ## SF Pro (optional)
 

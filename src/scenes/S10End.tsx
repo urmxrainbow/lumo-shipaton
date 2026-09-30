@@ -1,9 +1,14 @@
-/** 10 · END — black, the icon, the name, one line. Hold. Hard cut. */
+/**
+ * 09 · END — black, the icon, the name; the line lands on the last bar's
+ * downbeat, holds through the final hit, and cuts to black the moment the
+ * music resolves.
+ */
 import React from 'react';
 import {AbsoluteFill, Img, useCurrentFrame} from 'remotion';
-import {beats as b} from '../beats';
+import {HIT, beats as b} from '../beats';
 import {Headline, Reveal} from '../components/type';
 import {brand} from '../lib/media';
+import {at} from '../timeline';
 import {ease, mix, ramp} from '../lib/anim';
 import {C} from '../theme';
 
@@ -11,11 +16,14 @@ const ICON = {cx: 960, cy: 340, size: 190};
 
 export const S10End: React.FC = () => {
 	const f = useCurrentFrame();
-	const icon = ramp(f, b(1), b(3.5), ease.out);
-	const glow = ramp(f, b(1), b(5), ease.inOut);
+	const lastBar = at('endCard', HIT.finalHit) - b(4);
+	const cut = at('endCard', HIT.resolved);
+	if (f >= cut) return null; // hard cut to black
+
+	const icon = ramp(f, 4, 28, ease.out);
+	const glow = ramp(f, 4, 60, ease.inOut);
 	return (
 		<AbsoluteFill>
-			{/* a very quiet #E3D290 presence behind the icon */}
 			<div
 				style={{
 					position: 'absolute',
@@ -24,7 +32,7 @@ export const S10End: React.FC = () => {
 					width: 520,
 					height: 520,
 					borderRadius: '50%',
-					background: `radial-gradient(circle, rgba(227,210,144,0.16) 0%, rgba(227,210,144,0) 62%)`,
+					background: 'radial-gradient(circle, rgba(227,210,144,0.16) 0%, rgba(227,210,144,0) 62%)',
 					opacity: glow,
 				}}
 			/>
@@ -42,11 +50,11 @@ export const S10End: React.FC = () => {
 				}}
 			/>
 			<Headline x={0} y={478} size={112} weight={600} align="center">
-				<Reveal p={ramp(f, b(3), b(5.5))}>Lumo</Reveal>
+				<Reveal p={ramp(f, 18, 40)}>Lumo</Reveal>
 			</Headline>
-			<Headline x={0} y={690} size={54} align="center" color={C.soft}>
-				<Reveal p={ramp(f, b(5.5), b(8))}>Your progress</Reveal>
-				<Reveal p={ramp(f, b(6), b(8.5))}>has a story.</Reveal>
+			<Headline x={0} y={690} size={56} align="center" color={C.soft}>
+				<Reveal p={ramp(f, lastBar, lastBar + 20)}>Your progress</Reveal>
+				<Reveal p={ramp(f, lastBar + 6, lastBar + 26)}>has a story.</Reveal>
 			</Headline>
 		</AbsoluteFill>
 	);

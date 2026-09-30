@@ -21,3 +21,22 @@ export const HAIRLINE = '0 0 0 1px rgba(245,245,247,0.09)';
 
 /** The checkbox in scene 04 — the Create Goal window collapses into it. */
 export const CHECKBOX: Box = {x: 960 - 36, y: 470 - 36, w: 72, h: 72};
+
+/** The Progress window (right-hand hero placement). */
+export const PROGRESS_WINDOW: Box = {x: 1080, y: 50, w: 490, h: 980};
+/** The Progress window, centred — where memories return at the end. */
+export const PROGRESS_CENTER: Box = {x: 960 - 245, y: 50, w: 490, h: 980};
+
+/**
+ * Landing tiles inside a Progress window: memories fly into these and are
+ * absorbed by the UI. A grid starting ~25 % down the window.
+ */
+export const progressTile = (P: Box, k: number, cols = 4): Box => {
+	const pad = 24;
+	const gap = 10;
+	const s = (P.w - pad * 2 - gap * (cols - 1)) / cols;
+	return {x: P.x + pad + (k % cols) * (s + gap), y: P.y + P.h * 0.25 + Math.floor(k / cols) * (s + gap), w: s, h: s};
+};
+
+/** Circle reveal as a CSS clip-path (the film's transition motif). */
+export const circleClip = (r: number, cx = '50%', cy = '50%') => `circle(${Math.max(0, r)}px at ${cx} ${cy})`;

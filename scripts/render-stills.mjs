@@ -8,30 +8,7 @@ const HEADLESS = '/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/hea
 const browserExecutable = fs.existsSync(HEADLESS) ? HEADLESS : null;
 
 // Default review frames (at the placeholder 120 BPM grid).
-const DEFAULTS = {
-	'01a-problem': 95,
-	'01b-problem': 205,
-	'02a-light': 285,
-	'02b-lumo': 450,
-	'03a-create-typing': 560,
-	'03b-create-push': 640,
-	'03c-collapse': 712,
-	'04a-checkbox': 790,
-	'04b-photo': 915,
-	'04c-capture-it': 990,
-	'05a-showing-up': 1130,
-	'05b-gather': 1172,
-	'06-progress': 1330,
-	'07a-30-days': 1500,
-	'07b-first-memory': 1575,
-	'07c-pullback': 1700,
-	'07d-30-memories': 1890,
-	'08a-better': 1965,
-	'08b-our-goal': 2130,
-	'08c-grow': 2205,
-	'09-look-back': 2370,
-	'10-end': 2590,
-};
+const DEFAULTS = {"01a-q1": 70, "01b-q2": 240, "01c-tension": 320, "02a-expanding": 352, "02b-yeah-me-too": 425, "03a-black-opens": 458, "03b-thats-why": 510, "03c-light": 552, "03d-beauty": 700, "04a-set-goal": 770, "04b-show-up": 855, "04c-capture": 935, "04d-into-memory": 985, "05a-inside-memory": 1008, "05b-two": 1070, "05c-eight": 1150, "05d-sixteen": 1200, "05e-look-back": 1310, "06a-30-days": 1390, "06b-seed": 1418, "06c-portal": 1447, "06d-open": 1460, "06e-pullback": 1520, "06f-pullback2": 1590, "06g-30-memories": 1680, "07a-better-together": 1880, "07b-my-progress": 1980, "07c-yours": 2100, "07d-our-goal": 2200, "07e-grow": 2310, "08a-memories": 2440, "08b-look-back-on": 2530, "08c-into-lumo": 2600, "09a-end": 2760, "09b-end-line": 2830};
 
 const args = process.argv.slice(2);
 const targets = args.length ? Object.fromEntries(args.map((a) => [`f${a}`, Number(a)])) : DEFAULTS;

@@ -1,89 +1,153 @@
 /**
- * 08 · SOCIAL — My progress → Your progress → Our goal.
- * Two real Shared Goal views, calmly side by side, joined by one line.
+ * 07 · CONNECTION — the track drops to near-silence: "But progress feels
+ * better together." The warm bridge carries one person's progress, then
+ * another's joins; two lines grow toward each other and meet in a single
+ * #E3D290 point. On the biggest hit of the track: "Grow together."
  */
 import React from 'react';
 import {AbsoluteFill, useCurrentFrame} from 'remotion';
-import {beats as b} from '../beats';
+import {HIT, beats as b} from '../beats';
 import {HAIRLINE} from '../components/Screen';
 import {MediaSlot} from '../components/MediaSlot';
-import {Caption, Headline, Reveal} from '../components/type';
-import {Box, ease, ramp} from '../lib/anim';
-import {C} from '../theme';
+import {Caption, Reveal} from '../components/type';
+import {at} from '../timeline';
+import {Box, ease, mix, mixBox, ramp} from '../lib/anim';
+import {C, display} from '../theme';
 
-const A: Box = {x: 470, y: 70, w: 420, h: 800};
-const B: Box = {x: 1030, y: 70, w: 420, h: 800};
+const W = 420;
+const H = 800;
+const Y = 90;
+const SOLO: Box = {x: 960 - W / 2, y: Y, w: W, h: H};
+const A: Box = {x: 470, y: Y, w: W, h: H};
+const B: Box = {x: 1030, y: Y, w: W, h: H};
 const RAD = 48;
+const LINE_Y = Y + H / 2;
 
 export const S08Social: React.FC = () => {
 	const f = useCurrentFrame();
+	const bridge = at('social', HIT.bridge);
+	const dip = at('social', HIT.dip);
+	const grow = at('social', HIT.grow);
+	const end = at('social', HIT.resolution);
 
-	const better = ramp(f, b(1), b(3.5));
-	const betterOut = ramp(f, b(5), b(6), ease.in);
-	const aIn = ramp(f, b(6), b(8.5));
-	const bIn = ramp(f, b(8.25), b(10.75));
-	const capsOut = ramp(f, b(11), b(11.75), ease.in);
-	const link = ramp(f, b(11.5), b(13.25), ease.inOut);
-	const ours = ramp(f, b(12.5), b(14.5));
-	const groupOut = ramp(f, b(14.25), b(15.25), ease.in);
-	const grow = ramp(f, b(15.5), b(18));
+	// words in the silence
+	const line = ramp(f, 2, 16);
+	const lineOut = ramp(f, bridge + b(1), bridge + b(1) + 10, ease.in);
 
-	const cx = (A.x + A.w / 2 + B.x + B.w / 2) / 2;
-	const half = ((B.x + B.w / 2 - (A.x + A.w / 2)) / 2) * link;
+	// person A, then B joins
+	const aIn = ramp(f, bridge + b(1.25), bridge + b(2.75), ease.out);
+	const join = ramp(f, bridge + b(5), bridge + b(6.5), ease.inOut);
+	const aBox = mixBox(SOLO, A, join);
+	const bIn = ramp(f, bridge + b(5.25), bridge + b(6.75), ease.out);
+	const bBox = {...B, x: mix(B.x + 220, B.x, bIn)};
+
+	// they connect
+	const reach = ramp(f, bridge + b(8.5), bridge + b(10.5), ease.inOut);
+	const meet = ramp(f, bridge + b(10.25), bridge + b(10.25) + 10, ease.out);
+	const capsOut = ramp(f, bridge + b(8), bridge + b(8.5), ease.in);
+
+	// into the hit
+	const part = ramp(f, grow - b(1.25), grow - b(0.25), ease.inOut);
+	const dotY = mix(LINE_Y, 360, part);
+	const growIn = ramp(f, grow, grow + 12);
+	const out = ramp(f, end - 10, end, ease.in);
+
+	const leftEdge = A.x + A.w;
+	const rightEdge = B.x;
+	const half = (rightEdge - leftEdge) / 2;
 
 	return (
-		<AbsoluteFill>
-			<Headline x={0} y={440} size={120} align="center">
-				<Reveal p={better} out={betterOut}>
-					Better together.
+		<AbsoluteFill style={{opacity: 1 - out}}>
+			<div
+				style={{
+					position: 'absolute',
+					inset: 0,
+					display: 'flex',
+					flexDirection: 'column',
+					alignItems: 'center',
+					justifyContent: 'center',
+					color: C.white,
+					...display(120, 500),
+					lineHeight: 1.08,
+				}}
+			>
+				<Reveal p={line} out={lineOut} rise={24}>
+					But progress
 				</Reveal>
-			</Headline>
+				<Reveal p={ramp(f, 10, 24)} out={lineOut} rise={24}>
+					feels better together.
+				</Reveal>
+			</div>
 
-			<div style={{position: 'absolute', inset: 0, opacity: 1 - groupOut}}>
+			<div style={{position: 'absolute', inset: 0, opacity: 1 - part, transform: `scale(${mix(1, 0.96, part)})`}}>
 				<MediaSlot
 					id="sharedGoalA"
 					clip="view"
-					playhead={f - b(6)}
-					{...A}
+					playhead={f - bridge - b(1.25)}
+					{...aBox}
 					radius={RAD}
 					style={{opacity: aIn, transform: `translateY(${(1 - aIn) * 40}px)`, boxShadow: HAIRLINE}}
 				/>
-				<MediaSlot
-					id="sharedGoalB"
-					clip="view"
-					playhead={f - b(8.25)}
-					{...B}
-					radius={RAD}
-					style={{opacity: bIn, transform: `translateY(${(1 - bIn) * 40}px)`, boxShadow: HAIRLINE}}
-				/>
-				<div style={{position: 'absolute', left: A.x, width: A.w, top: 905, textAlign: 'center'}}>
+				{bIn > 0 && (
+					<MediaSlot
+						id="sharedGoalB"
+						clip="view"
+						playhead={f - bridge - b(5.25)}
+						{...bBox}
+						radius={RAD}
+						style={{opacity: bIn, boxShadow: HAIRLINE}}
+					/>
+				)}
+				<div style={{position: 'absolute', left: aBox.x, width: aBox.w, top: Y + H + 30}}>
 					<Caption x={0} y={0} size={28} align="center">
-						<Reveal p={ramp(f, b(7.5), b(9.5))} out={capsOut} rise={10}>
+						<Reveal p={ramp(f, bridge + b(2), bridge + b(3))} out={capsOut} rise={10}>
 							My progress
 						</Reveal>
 					</Caption>
 				</div>
-				<div style={{position: 'absolute', left: B.x, width: B.w, top: 905, textAlign: 'center'}}>
+				<div style={{position: 'absolute', left: bBox.x, width: bBox.w, top: Y + H + 30}}>
 					<Caption x={0} y={0} size={28} align="center">
-						<Reveal p={ramp(f, b(9.75), b(11.75))} out={capsOut} rise={10}>
+						<Reveal p={ramp(f, bridge + b(6), bridge + b(7))} out={capsOut} rise={10}>
 							Your progress
 						</Reveal>
 					</Caption>
 				</div>
-				{/* one meaningful line: two progress windows, one goal */}
-				{link > 0 && (
-					<div style={{position: 'absolute', left: cx - half, top: 922, width: half * 2, height: 2, background: C.lumo}} />
+				{/* two lines reach for each other and meet */}
+				{reach > 0 && (
+					<>
+						<div style={{position: 'absolute', left: leftEdge, top: LINE_Y - 1, width: half * reach, height: 2, background: C.lumo}} />
+						<div style={{position: 'absolute', left: rightEdge - half * reach, top: LINE_Y - 1, width: half * reach, height: 2, background: C.lumo}} />
+					</>
 				)}
-				<Caption x={0} y={950} size={28} align="center" color={C.lumo}>
-					<Reveal p={ours} rise={10}>
+				<Caption x={0} y={Y + H + 30} size={28} align="center" color={C.lumo}>
+					<Reveal p={ramp(f, bridge + b(10.5), bridge + b(11.5))} rise={10}>
 						Our goal
 					</Reveal>
 				</Caption>
 			</div>
 
-			<Headline x={0} y={440} size={120} align="center">
-				<Reveal p={grow}>Grow together.</Reveal>
-			</Headline>
+			{/* the meeting point — one #E3D290 dot that carries into the hit */}
+			{meet > 0 && (
+				<div
+					style={{
+						position: 'absolute',
+						left: 960 - 11,
+						top: dotY - 11,
+						width: 22,
+						height: 22,
+						borderRadius: '50%',
+						background: C.lumo,
+						transform: `scale(${meet * mix(1, 1.35, ramp(f, grow, grow + 6)) * mix(1, 1 / 1.35, ramp(f, grow + 6, grow + 20))})`,
+					}}
+				/>
+			)}
+			<div
+				style={{position: 'absolute', left: 0, right: 0, top: 420, textAlign: 'center', color: C.white, ...display(140, 500)}}
+			>
+				<Reveal p={growIn} rise={30}>
+					Grow together.
+				</Reveal>
+			</div>
 		</AbsoluteFill>
 	);
 };
