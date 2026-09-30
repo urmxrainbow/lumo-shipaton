@@ -9,12 +9,18 @@
  *   0:25        full groove
  *   1:00.63     one-bar BREAK (near silence)       → 1:03.67 hard re-entry
  *   1:59.3      groove drops, near-silence 2:00.3–2:01.3
- *   2:01.3      warm, lighter bridge                → dips again 2:11.2
+ *   2:01.3      lighter bridge — it re-plays the INTRO's material (chroma
+ *               match to bars 0–2), so it sounds like the song restarting.
+ *               The film never uses it.            → dips again 2:10.4
  *   2:13.45     loudest re-entry (final section)
  *   2:37.7      last downbeat; the track resolves by ~2:38.3
  *
- * The film uses a MUSIC EDIT of the track: four source segments joined on
- * downbeats of matching energy and harmony (see src/music-edit.json). Every visual moment below is expressed as
+ * The film uses a MUSIC EDIT of the track: four source segments, always
+ * moving FORWARD through the song, joined on downbeats of matching energy
+ * and harmony (see src/music-edit.json):
+ *   0:05.97–0:30.26 · 0:42.40–1:27.98 (the groove runs on past "30 memories"
+ *   into the next phrase: "Better together") · 2:10.43–2:22.52 (pre-drop bar
+ *   → the final lift: "Grow together") · 2:31.63–2:39.6 (ending). Every visual moment below is expressed as
  * a SOURCE time in the track and mapped onto the film, so the picture is
  * locked to the music.
  */
@@ -56,7 +62,8 @@ export const src = (t: number): number => {
  */
 export const HIT = {
 	start: 5.968, // the film (and its music) begins on this downbeat
-	q2: 8.243, // "And completely forgotten about it?"
+	q2: 8.243, // beat: "…and then"
+	forgot: 9.009, // downbeat: "forgot about it?" lands
 	tension: 10.519, // the small circle appears
 	pickup: 11.285, // the circle starts to expand
 	release: 12.028, // downbeat: frame is #E3D290
@@ -72,10 +79,10 @@ export const HIT = {
 	memoriesBuild: 55.325, // real memories: 1 → 2 → 4 → 5
 	breakDown: 60.627, // BREAK — "30 days."
 	reentry: 63.669, // RE-ENTRY — the frame is #E3D290
-	thirtyMemories: 69.753, // edit join: "30 memories."
-	silence: 119.25, // near-silence — "But progress feels better together."
-	bridge: 121.301, // warm bridge — shared goal
-	dip: 131.17,
+	thirtyMemories: 69.753, // downbeat: "30 memories."
+	silence: 75.836, // the NEXT 4-bar phrase of the same groove — "But progress feels better together."
+	bridge: 78.112, // shared goal (3 beats later)
+	dip: 131.17, // pre-drop bar (edit join at 2:10.43)
 	grow: 133.445, // biggest hit — #E3D290 frame: "Grow together."
 	resolution: 136.487,
 	endCard: 151.626, // edit join

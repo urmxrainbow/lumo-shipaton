@@ -6,9 +6,12 @@
  * of the frame, where "Every check-in means something." just was. It flies
  * home into the calendar while the mask opens around it to the whole
  * Insights screen. Then a slow push (1.00 → 1.04). Nothing covers the UI.
+ *
+ * This is the ONLY appearance of progress.jpg in the film: it enters and
+ * leaves inside this scene and is never shown again.
  */
 import React from 'react';
-import {AbsoluteFill, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, useCurrentFrame, useVideoConfig} from 'remotion';
 import {HAIRLINE} from '../components/Screen';
 import {Crop, MediaSlot, cropGeom} from '../components/MediaSlot';
 import {Headline, Reveal} from '../components/type';
@@ -22,8 +25,6 @@ export const PROGRESS_CROP: Crop = {x: 0.5, y: 0.47, zoom: 1};
 /** Calendar cells in progress.jpg (normalised source coords). */
 export const CELL = {
 	today: {x0: 0.447, x1: 0.555, y0: 0.795, y1: 0.862}, // 27 · ringed in the UI
-	d30: {x0: 0.804, x1: 0.909, y0: 0.795, y1: 0.862},
-	d31: {x0: 0.092, x1: 0.199, y0: 0.868, y1: 0.934},
 };
 type Cell = (typeof CELL)[keyof typeof CELL];
 
@@ -37,6 +38,9 @@ const OPEN = {from: 12, to: 40};
 
 export const S05Progress: React.FC = () => {
 	const f = useCurrentFrame();
+	const {durationInFrames: dur} = useVideoConfig();
+	// it leaves at the end of this scene — used once, then the film moves on
+	const exit = ramp(f, dur - 16, dur - 1, ease.in);
 
 	// the single check-in, then the mask opens around it
 	const cell = cellBox({...PROGRESS_SHOT, x: 0, y: 0}, CELL.today);
@@ -55,6 +59,7 @@ export const S05Progress: React.FC = () => {
 
 	return (
 		<AbsoluteFill>
+			<div style={{position: 'absolute', inset: 0, opacity: 1 - exit, transform: `scale(${mix(1, 0.96, exit)})`, transformOrigin: '1300px 540px'}}>
 			<div
 				style={{
 					position: 'absolute',
@@ -77,11 +82,12 @@ export const S05Progress: React.FC = () => {
 					}}
 				/>
 			</div>
+			</div>
 			<Headline x={200} y={400} size={120}>
-				<Reveal p={ramp(f, OPEN.to - 8, OPEN.to + 6)} rise={30}>
+				<Reveal p={ramp(f, OPEN.to - 8, OPEN.to + 6)} out={exit} rise={30}>
 					See how far
 				</Reveal>
-				<Reveal p={ramp(f, OPEN.to - 4, OPEN.to + 10)} rise={30}>
+				<Reveal p={ramp(f, OPEN.to - 4, OPEN.to + 10)} out={exit} rise={30}>
 					you’ve come.
 				</Reveal>
 			</Headline>

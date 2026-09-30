@@ -1,5 +1,5 @@
 /**
- * 07 · THE MOMENTS — the Progress shot steps back and the real memory
+ * 07 · THE MOMENTS — right after the Progress shot has left, the real memory
  * photos arrive one at a time (the Day row of memoryManifest: each day its
  * own photo, never repeated). A clean row, precise spacing, each labelled
  * with its day. Fewer photos → a shorter row; nothing is duplicated.
@@ -8,15 +8,11 @@ import React from 'react';
 import {AbsoluteFill, useCurrentFrame} from 'remotion';
 import {HIT, beats as b} from '../beats';
 import {at} from '../timeline';
-import {HAIRLINE} from '../components/Screen';
-import {MediaSlot} from '../components/MediaSlot';
 import {Memory} from '../components/Memory';
-import {Headline, Reveal} from '../components/type';
 import {memoryDay} from '../lib/media';
 import {memoriesFor} from '../memoryManifest';
-import {Box, ease, mix, mixBox, ramp} from '../lib/anim';
+import {Box, ease, mixBox, ramp} from '../lib/anim';
 import {C, text} from '../theme';
-import {PROGRESS_CROP, PROGRESS_RAD, PROGRESS_SHOT} from './S05Progress';
 
 const ASPECT = 16 / 9; // the photos are portrait
 type Row = {w: number; gap: number};
@@ -48,40 +44,17 @@ export const S06Memories: React.FC = () => {
 		}
 	});
 
-	// the Progress shot steps back; the first memory rises in its place in the row
-	const winOut = ramp(f, 0, 20, ease.in);
 	const end = at('memories', HIT.breakDown);
 	const exit = ramp(f, end - 14, end - 1, ease.in);
 
 	return (
 		<AbsoluteFill style={{opacity: 1 - exit}}>
-			{winOut < 1 && (
-				<MediaSlot
-					id="progress"
-					clip="shot"
-					playhead={999}
-					{...PROGRESS_SHOT}
-					crop={PROGRESS_CROP}
-					radius={PROGRESS_RAD}
-					style={{opacity: 1 - winOut, boxShadow: HAIRLINE, transform: `scale(${mix(1, 0.96, winOut)})`}}
-				/>
-			)}
-			{winOut < 1 && (
-				<Headline x={200} y={400} size={120}>
-					<Reveal p={1} out={winOut} rise={30}>
-						See how far
-					</Reveal>
-					<Reveal p={1} out={winOut} rise={30}>
-						you’ve come.
-					</Reveal>
-				</Headline>
-			)}
 			{Array.from({length: N ? cur : 0}, (_, k) => {
 				const arrived = PH.find(([n]) => k < n)!;
 				const idx = PH.indexOf(arrived);
 				// new moments wait until the row has made room for them
 				const delay = arrived[1] + 12 + (k - (PH[idx - 1]?.[0] ?? 0)) * 3;
-				const appear = k === 0 ? ramp(f, 18, 34, ease.out) : ramp(f, delay, delay + 14);
+				const appear = k === 0 ? ramp(f, 2, 18, ease.out) : ramp(f, delay, delay + 14);
 				let r = k < prev ? mixBox(rowCell(prev, k), rowCell(cur, k), t) : rowCell(cur, k);
 				return (
 					<React.Fragment key={k}>
@@ -109,7 +82,7 @@ export const S06Memories: React.FC = () => {
 								textAlign: 'center',
 								color: C.soft,
 								...text(24, 500),
-								opacity: appear * ramp(f, 26, 36),
+								opacity: appear * ramp(f, 10, 20),
 							}}
 						>
 							{memoryDay(photos[k])}
