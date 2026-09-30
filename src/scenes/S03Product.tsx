@@ -82,7 +82,8 @@ export const S03Product: React.FC = () => {
 
 	// window: Home → Create Goal size; after the Check in tap it collapses into the checkbox
 	const widen = ramp(f, 0, 14, ease.inOut);
-	const collapse = ramp(f, tapPill + 8, end - 2, ease.inOut);
+	// it only reads as an empty box for the last few frames; the ✓ lands on the next downbeat
+	const collapse = ramp(f, tapPill + 12, end, ease.inOut);
 	const r: Box = mixBox(mixBox(HOME_WINDOW, PRODUCT_WIDE, widen), CHECKBOX, collapse);
 	const radius = mix(RADIUS, 24, collapse);
 
@@ -100,7 +101,7 @@ export const S03Product: React.FC = () => {
 				radius={radius}
 				style={{boxShadow: HAIRLINE, opacity: 1 - ramp(collapse, 0.35, 0.8)}}
 			/>
-			{collapse > 0.4 && (
+			{collapse > 0.55 && (
 				<div
 					style={{
 						position: 'absolute',
@@ -110,7 +111,7 @@ export const S03Product: React.FC = () => {
 						height: r.h,
 						borderRadius: radius,
 						boxShadow: `inset 0 0 0 4px ${C.white}`,
-						opacity: ramp(collapse, 0.4, 1),
+						opacity: ramp(collapse, 0.55, 1),
 					}}
 				/>
 			)}

@@ -17,7 +17,7 @@
 import React from 'react';
 import {AbsoluteFill, Easing, useCurrentFrame, useVideoConfig} from 'remotion';
 import {HIT, beats as b} from '../beats';
-import {MaskLine, Reveal, Stack, arrive} from '../components/type';
+import {MaskLine, Stack, arrive, leave} from '../components/type';
 import {at} from '../timeline';
 import {ease, mix, ramp} from '../lib/anim';
 import {C, display} from '../theme';
@@ -44,9 +44,12 @@ export const S07Hero: React.FC = () => {
 	const showing = arrive(f, fps, reentry + 13, 18);
 	const draw = ramp(f, reentry + b(2), land, Easing.bezier(0.45, 0, 0.75, 0.3));
 	const r = Math.exp(mix(Math.log(COVER), Math.log(2), draw));
-	const scale = mix(1, 0.94, ramp(f, land, end, ease.inOut));
-	// a very short black breath before the next phrase
-	const out = ramp(f, end - 16, end - 4, ease.in);
+	// "30 memories." hits on the downbeat and leaves before the bar is over
+	const IMPACT = {damping: 200, stiffness: 320, mass: 0.6};
+	const hit = arrive(f, fps, land - 3, 9, IMPACT);
+	const hit2 = arrive(f, fps, land - 1, 10, IMPACT);
+	const gone = leave(f, end - 15, 10);
+	const gone2 = leave(f, end - 13, 10);
 
 	return (
 		<AbsoluteFill>
@@ -119,25 +122,15 @@ export const S07Hero: React.FC = () => {
 				</div>
 			)}
 
-			{/* ——— 30 memories. — the payoff, a campaign frame ——— */}
-			<div
-				style={{
-					position: 'absolute',
-					inset: 0,
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center',
-					justifyContent: 'center',
-					transform: `scale(${scale})`,
-				}}
-			>
-				<Reveal p={ramp(f, land, land + 12)} out={out} rise={40}>
-					<div style={{...display(430, 600), lineHeight: 0.92, color: C.white, textAlign: 'center'}}>30</div>
-				</Reveal>
-				<Reveal p={ramp(f, land + 4, land + 16)} out={out} rise={40}>
-					<div style={{...display(330, 600), lineHeight: 0.98, color: C.lumo, textAlign: 'center'}}>memories.</div>
-				</Reveal>
-			</div>
+			{/* ——— 30 memories. — an impact on the downbeat: large, fast, then gone ——— */}
+			<Stack style={{transform: `scale(${mix(1.07, 1, hit) * mix(1, 1.025, ramp(f, land, end, ease.inOut))})`}}>
+				<MaskLine enter={hit} exit={gone} size={430} weight={600} travel={0.9} style={{lineHeight: 0.92}}>
+					30
+				</MaskLine>
+				<MaskLine enter={hit2} exit={gone2} size={330} weight={600} color={C.lumo} travel={0.9} style={{lineHeight: 0.98}}>
+					memories.
+				</MaskLine>
+			</Stack>
 		</AbsoluteFill>
 	);
 };

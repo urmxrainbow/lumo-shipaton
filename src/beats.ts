@@ -18,13 +18,14 @@
  * The film uses a MUSIC EDIT of the track: four source segments, always
  * moving FORWARD through the song, joined on downbeats of matching energy
  * and harmony (see src/music-edit.json):
- *   0:05.97–0:30.26 · 0:42.40–1:12.80 · 1:15.84–1:27.98 (the groove runs on
- *   past "30 memories" into its next phrase, "Better together"; one repeated
- *   groove bar, 1:12.80–1:15.84, is left out so the yellow bridge is a single
- *   bar) · 2:10.43–2:22.52 (pre-drop bar → the final lift: "Grow together")
- *   · 2:31.63–2:39.6 (ending). Every visual moment below is expressed as
- * a SOURCE time in the track and mapped onto the film, so the picture is
- * locked to the music.
+ *   0:05.97–0:30.26 · 0:42.40–1:09.75 · 1:21.90–1:34.04 · 2:10.43–2:22.52
+ *   · 2:31.63–2:39.6
+ *   After "30 memories" (bar 21) the song continues at bar 26 — the same
+ *   place in its 4-bar loop (best match in the groove) — so the shared-habit
+ *   section starts at once and reaches the bright run of bars 28–29, whose
+ *   8 crisp high accents (every beat, 22.7 frames apart) carry the rapid
+ *   relationship words. It then joins on a downbeat into the quiet pre-drop
+ *   bar (the breath) and the final lift ("Grow together").
  */
 import {FPS} from './theme';
 import edit from './music-edit.json';
@@ -73,7 +74,7 @@ export const HIT = {
 	lumo: 18.112, // Lumo, the answer
 	product: 21.153, // Build a habit
 	showUp: 24.172, // Show up — tap Check in
-	checkbox: 27.214, // ✓  "You showed up." / "You put in the work."
+	checkbox: 27.214, // downbeat: ✓ lands  → "You showed up." / "You put in the work."
 	intoCheckin: 42.4, // edit join (downbeat): the check becomes the real Photo Check-in
 	shutter: 45.441, // downbeat: the shutter press in photo-checkin.MOV lands here
 	everyLine: 48.483, // "Every check-in means something."
@@ -81,10 +82,12 @@ export const HIT = {
 	memoriesBuild: 55.325, // real memories: 1 → 2 → 4 → 5
 	breakDown: 60.627, // BREAK — "30 days."
 	reentry: 63.669, // RE-ENTRY — the frame is #E3D290: "Keep showing up."
-	thirtyMemories: 66.711, // next downbeat: "30 memories."
-	silence: 75.836, // edit join (downbeat), the NEXT 4-bar phrase of the same groove — "But progress feels better together."
-	bridge: 78.112, // shared goal (3 beats later)
-	dip: 131.17, // pre-drop bar (edit join at 2:10.43)
+	thirtyMemories: 66.711, // next downbeat: "30 memories." (one bar, then the cut)
+	silence: 81.897, // edit join (bar 26 downbeat): the real shared habit, right away
+	bridge: 84.939, // bar 27: "Share a habit / with your"
+	/** The 8 crisp high accents of bars 28–29 — one relationship word each. */
+	tings: [88.68, 89.437, 90.195, 90.953, 91.71, 92.468, 93.225, 93.983],
+	dip: 130.426, // edit join: the quiet pre-drop bar — the breath, the small circle
 	grow: 133.445, // biggest hit — #E3D290 frame: "Grow together."
 	resolution: 136.487,
 	endCard: 151.626, // edit join

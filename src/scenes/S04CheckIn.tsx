@@ -66,12 +66,14 @@ export const S04CheckIn: React.FC = () => {
 	const line = at('checkin', HIT.everyLine);
 	const end = at('checkin', HIT.progressShot);
 
-	// ——— bar 1: the check ———
-	const tickAt = b(1);
-	const fill = ramp(f, tickAt, tickAt + 10, ease.out);
-	const tick = ramp(f, tickAt + 3, tickAt + 16, ease.out);
-	const showed = b(1.5);
-	const work = b(2.6);
+	// ——— bar 1: the check — it lands ON the downbeat the box arrives on (no
+	// waiting on an empty box): fill + stroke in a few frames, a restrained
+	// settle (0.94 → 1.03 → 1.00), then the words move straight on
+	const fill = ramp(f, 0, 5, ease.out);
+	const tick = ramp(f, 1, 8, ease.out);
+	const pop = f < 5 ? mix(0.94, 1.03, ramp(f, 0, 5, ease.out)) : mix(1.03, 1, ramp(f, 5, 12, ease.inOut));
+	const showed = b(0.6);
+	const work = b(1.75);
 
 	// ——— bar 2: the check becomes the real Photo Check-in ———
 	const grow = ramp(f, join, join + 20, ease.inOut);
@@ -115,6 +117,7 @@ export const S04CheckIn: React.FC = () => {
 						height: box.h,
 						borderRadius: radius,
 						overflow: 'hidden',
+						transform: `scale(${pop})`,
 						boxShadow: `inset 0 0 0 ${mix(4, 1, grow)}px ${grow < 0.5 ? C.white : 'rgba(245,245,247,0.09)'}`,
 					}}
 				>
@@ -126,7 +129,7 @@ export const S04CheckIn: React.FC = () => {
 					width={CHECKBOX.w}
 					height={CHECKBOX.h}
 					viewBox="0 0 96 96"
-					style={{position: 'absolute', left: CHECKBOX.x, top: CHECKBOX.y, opacity: 1 - ramp(f, join - 2, join + 4)}}
+					style={{position: 'absolute', left: CHECKBOX.x, top: CHECKBOX.y, opacity: 1 - ramp(f, join - 2, join + 4), transform: `scale(${pop})`}}
 				>
 					<path
 						d="M28 50 L42 64 L69 34"
