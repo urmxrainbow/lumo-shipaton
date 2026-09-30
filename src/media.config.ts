@@ -64,10 +64,10 @@ export const MEDIA_SLOTS = {
 			// Timestamps measured from create-goal.mov (13.06 s).
 			createSheet: {in: 0.3, out: 1.7}, // "Add new habit / Post on the feed"
 			openForm: {in: 2.57, out: 2.9}, // New habit sheet slides up
-			typing: {in: 5.35, out: 7.45, rate: 1.6}, // W… Workout + suggested emoji
+			typing: {in: 5.35, out: 7.45, rate: 1.1}, // W… Workout + suggested emoji
 			tapCreate: {in: 9.7, out: 10.1}, // Create habit button tap
 			invite: {in: 9.2, out: 9.2}, // Reminder + Invite friends (still)
-			added: {in: 11.58, out: 13.0, rate: 1.4}, // path scrolls to new "Workout" node
+			added: {in: 11.58, out: 13.0}, // path scrolls to new "Workout" node
 		},
 		needs: 'Create habit flow, name typed, Create tapped.',
 	},

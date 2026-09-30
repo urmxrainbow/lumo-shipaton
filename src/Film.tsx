@@ -4,30 +4,28 @@ import {TIMELINE} from './timeline';
 import {musicSrc} from './lib/media';
 import {C} from './theme';
 import './lib/fonts';
-import {S01Opening} from './scenes/S01Opening';
-import {S02Question} from './scenes/S02Question';
-import {S03Transformation} from './scenes/S03Transformation';
-import {S04LumoReveal} from './scenes/S04LumoReveal';
-import {S05CoreLoop} from './scenes/S05CoreLoop';
-import {S06ProgressBuild} from './scenes/S06ProgressBuild';
+import {S01Problem} from './scenes/S01Problem';
+import {S02Lumo} from './scenes/S02Lumo';
+import {S03CreateGoal} from './scenes/S03CreateGoal';
+import {S04Capture} from './scenes/S04Capture';
+import {S05ShowingUp} from './scenes/S05ShowingUp';
+import {S06Progress} from './scenes/S06Progress';
 import {S07Hero} from './scenes/S07Hero';
 import {S08Social} from './scenes/S08Social';
-import {S09Montage} from './scenes/S09Montage';
-import {S10Callback} from './scenes/S10Callback';
-import {S11EndCard} from './scenes/S11EndCard';
+import {S09Resolution} from './scenes/S09Resolution';
+import {S10End} from './scenes/S10End';
 
 const SCENES: [keyof typeof TIMELINE, React.FC][] = [
-	['opening', S01Opening],
-	['question', S02Question],
-	['transformation', S03Transformation],
-	['lumoReveal', S04LumoReveal],
-	['coreLoop', S05CoreLoop],
-	['progressBuild', S06ProgressBuild],
+	['problem', S01Problem],
+	['lumo', S02Lumo],
+	['createGoal', S03CreateGoal],
+	['capture', S04Capture],
+	['showingUp', S05ShowingUp],
+	['progress', S06Progress],
 	['hero', S07Hero],
 	['social', S08Social],
-	['montage', S09Montage],
-	['callback', S10Callback],
-	['endCard', S11EndCard],
+	['resolution', S09Resolution],
+	['endCard', S10End],
 ];
 
 export const Film: React.FC = () => {

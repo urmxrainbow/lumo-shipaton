@@ -1,8 +1,8 @@
 # Lumo: Shipaton product film
 
-A music-driven motion-graphics film for **Lumo**, the social habit tracker where you can *see* your progress. Built with React + TypeScript + [Remotion](https://remotion.dev). 1920×1080, 30 fps.
+A premium, music-driven product film for **Lumo**, the social habit tracker where you can *see* your progress. Built with React + TypeScript + [Remotion](https://remotion.dev). 1920×1080, 30 fps.
 
-**30 → 30 DAYS → 30 MEMORIES → YOUR STORY.**
+**Have you ever set a goal and forgotten about it? → Lumo → capture it → 30 days → 30 memories → your progress has a story.**
 
 ## Run it
 
@@ -33,9 +33,9 @@ assets/
 | `src/beats.ts` | Music timing: BPM, offset, the beat map. The master clock. |
 | `src/timeline.ts` | Every scene's position, in bars |
 | `src/media.config.ts` | Every replaceable media slot, with clip in/out points |
-| `src/layouts.ts` | Shared compositions (collage, hero ring, callback), which give the film its continuity |
+| `src/components/Screen.tsx` | Shared product-window geometry, handed from scene to scene |
 | `src/components/MediaSlot.tsx` | A fixed video window: real footage if present, placeholder if not |
-| `src/components/geo.tsx` | The #E3D290 motion language: dots, lines, blocks, frames, corner marks, labels |
-| `src/scenes/S01…S11` | The eleven scenes |
+| `src/components/type.tsx` | Typography (SF Pro when present in `assets/fonts/sf-pro/`, otherwise Inter) |
+| `src/scenes/S01…S10` | The ten scenes |
 
-**Visual system:** BLACK `#000000` is the stage. LUMO `#E3D290` is the motion language. Real photos stay full colour. Real Lumo UI is the product.
+**Visual system:** black `#000000` is the stage (85–90 % of the film). `#E3D290` is rare and valuable. Real photos stay full colour. Real Lumo UI is the hero.

@@ -11,7 +11,7 @@ import React from 'react';
 import {Freeze, OffthreadVideo} from 'remotion';
 import {MEDIA_SLOTS, SlotId} from '../media.config';
 import {slotSrc} from '../lib/media';
-import {C, FPS, display, mono} from '../theme';
+import {C, FPS, display, text} from '../theme';
 
 export type Crop = {
 	/** Focus point in normalised source coords (0–1). */
@@ -140,92 +140,65 @@ export const MediaSlot: React.FC<Props> = ({
 	);
 };
 
-/** The virtual recording surface: shows where the crop is looking. */
-const PlaceholderCanvas: React.FC<{crop: Crop}> = ({crop}) => {
-	const lines = [];
-	for (let i = 1; i < 10; i++) {
-		lines.push(
-			<div key={`h${i}`} style={{position: 'absolute', left: 0, right: 0, top: `${i * 10}%`, height: 1, background: 'rgba(227,210,144,0.14)'}} />,
-			<div key={`v${i}`} style={{position: 'absolute', top: 0, bottom: 0, left: `${i * 10}%`, width: 1, background: 'rgba(227,210,144,0.08)'}} />,
-		);
-	}
-	return (
-		<div style={{position: 'absolute', inset: 0, background: '#050505'}}>
-			{lines}
-			{/* y-position ticks, so the guide can say "keep X at 40%" */}
-			{Array.from({length: 9}, (_, i) => (
-				<div
-					key={`t${i}`}
-					style={{
-						position: 'absolute',
-						left: '2%',
-						top: `calc(${(i + 1) * 10}% + 6px)`,
-						color: 'rgba(227,210,144,0.35)',
-						...mono(22),
-					}}
-				>
-					{(i + 1) * 10}
+/**
+ * The virtual recording surface — quiet by design. A faint grid with
+ * y-position marks shows exactly how the crop frames the recording; the
+ * soft ring marks the point the crop is centred on.
+ */
+const PlaceholderCanvas: React.FC<{crop: Crop}> = ({crop}) => (
+	<div style={{position: 'absolute', inset: 0, background: '#0B0B0C'}}>
+		{Array.from({length: 9}, (_, i) => (
+			<React.Fragment key={i}>
+				<div style={{position: 'absolute', left: 0, right: 0, top: `${(i + 1) * 10}%`, height: 1, background: 'rgba(245,245,247,0.045)'}} />
+				<div style={{position: 'absolute', left: '3%', top: `calc(${(i + 1) * 10}% + 10px)`, color: 'rgba(245,245,247,0.18)', ...text(26)}}>
+					{(i + 1) * 10}%
 				</div>
-			))}
-			{/* focus crosshair: the designed crop centres here */}
-			<div
-				style={{
-					position: 'absolute',
-					left: `${crop.x * 100}%`,
-					top: `${crop.y * 100}%`,
-					width: 120,
-					height: 120,
-					marginLeft: -60,
-					marginTop: -60,
-					borderRadius: '50%',
-					border: `3px solid rgba(227,210,144,0.5)`,
-				}}
-			/>
-		</div>
-	);
-};
+			</React.Fragment>
+		))}
+		<div
+			style={{
+				position: 'absolute',
+				left: `${crop.x * 100}%`,
+				top: `${crop.y * 100}%`,
+				width: 140,
+				height: 140,
+				marginLeft: -70,
+				marginTop: -70,
+				borderRadius: '50%',
+				border: '2px solid rgba(227,210,144,0.28)',
+			}}
+		/>
+	</div>
+);
 
 const PlaceholderLabel: React.FC<{id: SlotId; clip: string; w: number; h: number}> = ({id, clip, w, h}) => {
 	const slot = MEDIA_SLOTS[id];
-	const k = Math.max(0.42, Math.min(1.1, Math.min(w, h * 0.8) / 520));
+	const k = Math.max(0.5, Math.min(1.2, Math.min(w, h * 0.8) / 520));
 	const compact = Math.min(w, h) < 260;
 	const secs = (clipFrames(id, clip) / FPS).toFixed(1);
-	const pad = 26 * k;
 	return (
-		<div style={{position: 'absolute', inset: 0, pointerEvents: 'none'}}>
-			<div style={{position: 'absolute', left: pad, top: pad, color: C.lumo, ...mono(15 * k, 700)}}>
-				● SLOT {slot.number}
+		<div
+			style={{
+				position: 'absolute',
+				inset: 0,
+				display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'center',
+				justifyContent: 'center',
+				textAlign: 'center',
+				pointerEvents: 'none',
+				gap: 12 * k,
+			}}
+		>
+			<div style={{color: C.faint, ...text(15 * k, 500), letterSpacing: '0.12em'}}>SLOT {slot.number}</div>
+			<div style={{color: C.white, whiteSpace: 'nowrap', ...display(Math.min(46 * k, (w * 0.84) / (slot.label.length * 0.52)), 500)}}>
+				{slot.label}
 			</div>
-			<div
-				style={{
-					position: 'absolute',
-					left: pad,
-					right: pad,
-					top: '50%',
-					transform: 'translateY(-50%)',
-				}}
-			>
-				<div
-					style={{
-						...display(900, 100),
-						// never wider than the window
-						fontSize: Math.min(64 * k, (w - pad * 2) / (slot.label.length * 0.62)),
-						color: C.lumo,
-						whiteSpace: 'nowrap',
-						lineHeight: 0.9,
-					}}
-				>
-					{slot.label}
+			{!compact && (
+				<div style={{color: C.faint, ...text(15 * k)}}>
+					assets/recordings/{slot.file}.mp4 · {clip} {secs}s
 				</div>
-				{!compact && (
-					<div style={{marginTop: 18 * k, color: 'rgba(247,245,238,0.7)', ...mono(14 * k), letterSpacing: '0.08em', lineHeight: 1.5, textTransform: 'none'}}>
-						ADD assets/recordings/{slot.file}.mp4
-					</div>
-				)}
-			</div>
-			<div style={{position: 'absolute', left: pad, bottom: pad, color: C.lumo, ...mono(14 * k)}}>
-				{clip} · {secs}s
-			</div>
+			)}
 		</div>
 	);
 };

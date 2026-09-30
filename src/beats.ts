@@ -4,9 +4,12 @@
  * No music file has been supplied yet, so the film runs on a placeholder
  * grid of 120 BPM, 4/4 (1 beat = 15 frames, 1 bar = 60 frames).
  * When the real track lands in assets/audio/, analyse it and set BPM +
- * OFFSET here: every scene is authored in bars/beats, so the whole film
- * re-times from these two numbers. Individual accents can be nudged in
- * ACCENTS without touching scene code.
+ * OFFSET here, then align the SECTION boundaries below to the track's
+ * real phrase changes. Scenes are authored in bars and beats, so the
+ * whole film re-times from this file.
+ *
+ * Cutting philosophy: musical SECTIONS drive major visual changes.
+ * Not every beat gets a transition.
  */
 import {FPS} from './theme';
 
@@ -22,19 +25,15 @@ export const beats = (n: number) => Math.round(n * BEAT);
 /** Absolute frame for a bar (0-indexed) + beat offset. */
 export const barAt = (bar: number, beat = 0) => OFFSET + Math.round(bar * BAR + beat * BEAT);
 
-/** Named musical landmarks (in bars) — the beat map. */
+/** Musical sections, in bars. QUIET → BUILD → PRODUCT → BUILD → HERO → CONNECTION → RESOLUTION. */
 export const MUSIC = {
-	intro: 0, // sparse intro: dot + number
-	build: 2, // question section, tension
-	drop: 5, // first big entrance → memory explosion
-	verse: 9, // product reveal + core loop groove
-	accumulate: 17, // momentum build
-	heroBuild: 20,
-	heroStop: 23, // THE break — everything freezes
-	heroTurn: 24, // DAYS → MEMORIES
-	social: 26,
-	montage: 29, // fastest section
-	callback: 31.5,
-	end: 33.5,
-	cut: 36, // final hit → black
+	quiet: 0, // the problem — near silence, space
+	build: 4, // first light: Lumo appears
+	product: 8, // create / capture / showing up / progress
+	lift: 20, // progress beauty shot, tension into the hero
+	hero: 24, // 30 DAYS → memories → 30 MEMORIES
+	connection: 32, // together
+	resolution: 37, // looking back
+	end: 40, // identity
+	cut: 43.5, // final hit → hard cut to black
 } as const;

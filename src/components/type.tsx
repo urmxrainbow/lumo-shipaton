@@ -1,57 +1,82 @@
 import React from 'react';
-import {C, display} from '../theme';
+import {C, display, text} from '../theme';
 
 /**
- * A line of display type revealed through a mask (rises from below its
- * own baseline). p: 0 hidden → 1 in place. out: 0 → 1 exits upward.
+ * Controlled entrance: a short rise, opacity and a whisper of blur.
+ * p: 0 hidden → 1 settled. out: 0 → 1 leaves (drifts up slightly, fades).
  */
-export const MaskLine: React.FC<{
-	children: React.ReactNode;
+export const Reveal: React.FC<{
 	p: number;
 	out?: number;
-	size: number;
-	color?: string;
-	weight?: number;
-	width?: number;
+	rise?: number;
+	children: React.ReactNode;
 	style?: React.CSSProperties;
-}> = ({children, p, out = 0, size, color = C.white, weight = 900, width = 112, style}) => (
-	<div style={{overflow: 'hidden', paddingTop: size * 0.06, paddingBottom: size * 0.02, ...style}}>
+}> = ({p, out = 0, rise = 26, children, style}) => {
+	const o = p * (1 - out);
+	if (o <= 0.001) return null;
+	return (
 		<div
 			style={{
-				...display(weight, width),
-				fontSize: size,
-				color,
-				whiteSpace: 'nowrap',
-				transform: `translateY(${(1 - p) * 105 - out * 105}%)`,
+				opacity: o,
+				transform: `translateY(${(1 - p) * rise - out * rise * 0.5}px)`,
+				filter: p < 1 || out > 0 ? `blur(${(1 - p) * 10 + out * 6}px)` : undefined,
+				...style,
 			}}
 		>
 			{children}
 		</div>
-	</div>
-);
+	);
+};
 
-/** Plain positioned display text. */
-export const Big: React.FC<{
+/** Headline block: one or more lines, positioned absolutely. */
+export const Headline: React.FC<{
 	x: number;
 	y: number;
 	size: number;
-	children: React.ReactNode;
-	color?: string;
-	weight?: number;
-	width?: number;
+	weight?: 400 | 500 | 600;
 	align?: 'left' | 'center' | 'right';
+	width?: number;
+	color?: string;
+	children: React.ReactNode;
 	style?: React.CSSProperties;
-}> = ({x, y, size, children, color = C.white, weight = 900, width = 112, align = 'left', style}) => (
+}> = ({x, y, size, weight = 500, align = 'left', width, color = C.white, children, style}) => (
 	<div
 		style={{
 			position: 'absolute',
-			left: x,
+			left: align === 'center' ? 0 : x,
+			right: align === 'center' ? 0 : undefined,
 			top: y,
-			...display(weight, width),
-			fontSize: size,
+			width: align === 'center' ? undefined : width,
+			textAlign: align,
 			color,
-			whiteSpace: 'nowrap',
-			transform: align === 'center' ? 'translateX(-50%)' : align === 'right' ? 'translateX(-100%)' : undefined,
+			whiteSpace: 'pre-line',
+			...display(size, weight),
+			...style,
+		}}
+	>
+		{children}
+	</div>
+);
+
+/** Small supporting copy. */
+export const Caption: React.FC<{
+	x: number;
+	y: number;
+	size?: number;
+	align?: 'left' | 'center';
+	color?: string;
+	children: React.ReactNode;
+	style?: React.CSSProperties;
+}> = ({x, y, size = 26, align = 'left', color = C.soft, children, style}) => (
+	<div
+		style={{
+			position: 'absolute',
+			left: align === 'center' ? 0 : x,
+			right: align === 'center' ? 0 : undefined,
+			top: y,
+			textAlign: align,
+			color,
+			...text(size),
 			...style,
 		}}
 	>

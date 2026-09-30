@@ -1,111 +1,89 @@
 /**
- * S08 · SOCIAL — two people, one goal. A #E3D290 line connects two
- * Shared Goal windows; check-ins travel back and forth along it.
- * The line then becomes the underline of BETTER / GROW TOGETHER.
+ * 08 · SOCIAL — My progress → Your progress → Our goal.
+ * Two real Shared Goal views, calmly side by side, joined by one line.
  */
 import React from 'react';
 import {AbsoluteFill, useCurrentFrame} from 'remotion';
 import {beats as b} from '../beats';
-import {Card} from '../components/Card';
-import {Dot, Label, Line} from '../components/geo';
+import {HAIRLINE} from '../components/Screen';
 import {MediaSlot} from '../components/MediaSlot';
-import {MaskLine} from '../components/type';
-import {Rect} from '../layouts';
-import {ease, mix, ramp} from '../lib/anim';
+import {Caption, Headline, Reveal} from '../components/type';
+import {Box, ease, ramp} from '../lib/anim';
 import {C} from '../theme';
 
-const WIN_A: Rect = {x: 250, y: 90, w: 400, h: 900};
-const WIN_B: Rect = {x: 1270, y: 90, w: 400, h: 900};
-const LY = 540;
-const LA = WIN_A.x + WIN_A.w;
-const LB = WIN_B.x;
-
-/** Check-in exchange: [beat, from, memory set, index, rect]. */
-const EXCHANGE: [number, 'a' | 'b', number, Rect][] = [
-	[4, 'a', 11, {x: 700, y: 110, w: 220, h: 290}],
-	[5, 'b', 0, {x: 1000, y: 640, w: 220, h: 290}],
-	[6, 'a', 16, {x: 700, y: 640, w: 220, h: 290}],
-	[7, 'b', 1, {x: 1000, y: 110, w: 220, h: 290}],
-];
+const A: Box = {x: 470, y: 70, w: 420, h: 800};
+const B: Box = {x: 1030, y: 70, w: 420, h: 800};
+const RAD = 48;
 
 export const S08Social: React.FC = () => {
 	const f = useCurrentFrame();
-	const TITLE = b(8);
-	const GROW = b(10);
 
-	if (f >= TITLE) {
-		const m = ramp(f, TITLE, TITLE + 8, ease.snap);
-		const x1 = mix(LA, 120, m);
-		const x2 = mix(LB, 1800, m);
-		const y = mix(LY, 760, m);
-		const swap = ramp(f, GROW, GROW + 7);
-		return (
-			<AbsoluteFill>
-				<div style={{position: 'absolute', left: 110, top: 250}}>
-					<div style={{position: 'relative', height: 230 * 0.92}}>
-						<div style={{position: 'absolute', left: 0, top: 0}}>
-							<MaskLine p={ramp(f, TITLE + 2, TITLE + 10)} out={swap} size={230}>
-								Better
-							</MaskLine>
-						</div>
-						<div style={{position: 'absolute', left: 0, top: 0}}>
-							<MaskLine p={swap} size={230}>
-								Grow
-							</MaskLine>
-						</div>
-					</div>
-					<MaskLine p={ramp(f, TITLE + 5, TITLE + 13)} size={230} color={C.lumo}>
-						Together.
-					</MaskLine>
-				</div>
-				<Line x1={x1} y1={y} x2={x2} y2={y} t={4} />
-				<Dot x={x1} y={y} r={10} />
-				<Dot x={x2} y={y} r={10} />
-				{m >= 1 && (
-					<>
-						<Label x={120} y={y + 26} size={18}>
-							A
-						</Label>
-						<Label x={1800} y={y + 26} size={18} align="right">
-							B
-						</Label>
-					</>
-				)}
-			</AbsoluteFill>
-		);
-	}
+	const better = ramp(f, b(1), b(3.5));
+	const betterOut = ramp(f, b(5), b(6), ease.in);
+	const aIn = ramp(f, b(6), b(8.5));
+	const bIn = ramp(f, b(8.25), b(10.75));
+	const capsOut = ramp(f, b(11), b(11.75), ease.in);
+	const link = ramp(f, b(11.5), b(13.25), ease.inOut);
+	const ours = ramp(f, b(12.5), b(14.5));
+	const groupOut = ramp(f, b(14.25), b(15.25), ease.in);
+	const grow = ramp(f, b(15.5), b(18));
 
-	const openA = ramp(f, b(1), b(1) + 9, ease.snap);
-	const link = ramp(f, b(2), b(2.75), ease.inOut);
-	const openB = ramp(f, b(2.75), b(2.75) + 9, ease.snap);
-
-	// the travelling dot: A → B on the link, then with each check-in
-	let dotX: number | null = null;
-	if (f >= b(2) && f < b(2.75)) dotX = mix(LA, LB, link);
-	EXCHANGE.forEach(([beat, who]) => {
-		const t = ramp(f, b(beat) - 6, b(beat), ease.inOut);
-		if (f >= b(beat) - 6 && f < b(beat)) dotX = who === 'a' ? mix(LA, LB, t) : mix(LB, LA, t);
-	});
+	const cx = (A.x + A.w / 2 + B.x + B.w / 2) / 2;
+	const half = ((B.x + B.w / 2 - (A.x + A.w / 2)) / 2) * link;
 
 	return (
 		<AbsoluteFill>
-			<Line x1={960} y1={0} x2={960} y2={1080} p={ramp(f, 0, 8, ease.snap)} t={2} color="rgba(227,210,144,0.5)" />
-			<MediaSlot id="sharedGoalA" clip="view" playhead={f - b(1)} {...WIN_A} radius={30} style={{clipPath: `inset(${(1 - openA) * 100}% 0 0 0 round 30px)`}} />
-			<MediaSlot id="sharedGoalB" clip="view" playhead={f - b(2.75)} {...WIN_B} radius={30} style={{clipPath: `inset(0 0 ${(1 - openB) * 100}% 0 round 30px)`}} />
-			{f >= b(1) && <Label x={WIN_A.x} y={48} size={20}>Person A</Label>}
-			{f >= b(2.75) && <Label x={WIN_B.x + WIN_B.w} y={48} size={20} align="right">Person B</Label>}
-			<Line x1={LA} y1={LY} x2={LB} y2={LY} p={link} t={3} />
-			{dotX !== null && <Dot x={dotX} y={LY} r={11} />}
-			{EXCHANGE.map(([beat, who, i, r]) => (
-				<React.Fragment key={beat}>
-					<Card f={f} at={b(beat)} r={r} i={i} set={who} enter={who === 'a' ? 'wipeD' : 'wipeR'} dur={6} border />
-					{f >= b(beat) + 4 && (
-						<Label x={r.x} y={r.y + r.h + 12} size={15}>
-							{who === 'a' ? 'A' : 'B'} — checked in
-						</Label>
-					)}
-				</React.Fragment>
-			))}
+			<Headline x={0} y={440} size={120} align="center">
+				<Reveal p={better} out={betterOut}>
+					Better together.
+				</Reveal>
+			</Headline>
+
+			<div style={{position: 'absolute', inset: 0, opacity: 1 - groupOut}}>
+				<MediaSlot
+					id="sharedGoalA"
+					clip="view"
+					playhead={f - b(6)}
+					{...A}
+					radius={RAD}
+					style={{opacity: aIn, transform: `translateY(${(1 - aIn) * 40}px)`, boxShadow: HAIRLINE}}
+				/>
+				<MediaSlot
+					id="sharedGoalB"
+					clip="view"
+					playhead={f - b(8.25)}
+					{...B}
+					radius={RAD}
+					style={{opacity: bIn, transform: `translateY(${(1 - bIn) * 40}px)`, boxShadow: HAIRLINE}}
+				/>
+				<div style={{position: 'absolute', left: A.x, width: A.w, top: 905, textAlign: 'center'}}>
+					<Caption x={0} y={0} size={28} align="center">
+						<Reveal p={ramp(f, b(7.5), b(9.5))} out={capsOut} rise={10}>
+							My progress
+						</Reveal>
+					</Caption>
+				</div>
+				<div style={{position: 'absolute', left: B.x, width: B.w, top: 905, textAlign: 'center'}}>
+					<Caption x={0} y={0} size={28} align="center">
+						<Reveal p={ramp(f, b(9.75), b(11.75))} out={capsOut} rise={10}>
+							Your progress
+						</Reveal>
+					</Caption>
+				</div>
+				{/* one meaningful line: two progress windows, one goal */}
+				{link > 0 && (
+					<div style={{position: 'absolute', left: cx - half, top: 922, width: half * 2, height: 2, background: C.lumo}} />
+				)}
+				<Caption x={0} y={950} size={28} align="center" color={C.lumo}>
+					<Reveal p={ours} rise={10}>
+						Our goal
+					</Reveal>
+				</Caption>
+			</div>
+
+			<Headline x={0} y={440} size={120} align="center">
+				<Reveal p={grow}>Grow together.</Reveal>
+			</Headline>
 		</AbsoluteFill>
 	);
 };

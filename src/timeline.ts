@@ -11,16 +11,15 @@ const span = (startBar: number, endBar: number): Span => ({
 });
 
 export const TIMELINE = {
-	opening: span(MUSIC.intro, MUSIC.build),
-	question: span(MUSIC.build, MUSIC.drop),
-	transformation: span(MUSIC.drop, MUSIC.verse),
-	lumoReveal: span(MUSIC.verse, 11),
-	coreLoop: span(11, MUSIC.accumulate),
-	progressBuild: span(MUSIC.accumulate, MUSIC.heroBuild),
-	hero: span(MUSIC.heroBuild, MUSIC.social),
-	social: span(MUSIC.social, MUSIC.montage),
-	montage: span(MUSIC.montage, MUSIC.callback),
-	callback: span(MUSIC.callback, MUSIC.end),
+	problem: span(MUSIC.quiet, MUSIC.build),
+	lumo: span(MUSIC.build, MUSIC.product),
+	createGoal: span(MUSIC.product, 12),
+	capture: span(12, 17),
+	showingUp: span(17, MUSIC.lift),
+	progress: span(MUSIC.lift, MUSIC.hero),
+	hero: span(MUSIC.hero, MUSIC.connection),
+	social: span(MUSIC.connection, MUSIC.resolution),
+	resolution: span(MUSIC.resolution, MUSIC.end),
 	endCard: span(MUSIC.end, MUSIC.cut),
 } as const;
 

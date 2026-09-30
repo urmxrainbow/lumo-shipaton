@@ -1,159 +1,112 @@
 /**
- * S07 · THE SIGNATURE MOMENT.
- * BUILD: memories escape the Progress window, tethered by #E3D290 lines,
- *        while the camera pulls back to reveal the UI surrounded by life.
- * STOP:  everything freezes. 30 DAYS.
- * TURN:  a block wipes DAYS. → MEMORIES. Hold. PROGRESS YOU CAN ACTUALLY SEE.
+ * 07 · HERO — the moments behind the number.
+ * BLACK → "30 days." → one memory → the camera pulls back as memories
+ * arrive one by one into a perfectly even grid → simplify →
+ * "30 memories." The poster frame of the film.
  */
 import React from 'react';
 import {AbsoluteFill, useCurrentFrame} from 'remotion';
 import {beats as b} from '../beats';
-import {Block, Corners, Label, Line} from '../components/geo';
-import {MediaSlot} from '../components/MediaSlot';
-import {Memory, dayOf} from '../components/Memory';
-import {HERO_RING, HERO_SLOT, Rect} from '../layouts';
+import {Memory} from '../components/Memory';
+import {Caption, Reveal} from '../components/type';
 import {ease, mix, ramp} from '../lib/anim';
-import {C, display, mono} from '../theme';
+import {C, display} from '../theme';
 
-/** Emergence schedule: [beat, how many new memories]. Accelerates. */
-const WAVES: [number, number][] = [
-	[1, 1],
-	[3, 2],
-	[5, 2],
-	[6, 3],
-	[7, 4],
-	[8, 4],
-	[9, 5],
-	[10, 4],
-	[10.5, 3],
-	[11, 2],
-];
-const STOP = b(12); // bar 23 — the break
-const TURN = b(16); // bar 24 — DAYS → MEMORIES
-const SUB = b(18);
+const COLS = 6;
+const ROWS = 5;
+const CW = 200;
+const CH = 250;
+const GAP = 22;
+const GW = COLS * CW + (COLS - 1) * GAP;
+const GH = ROWS * CH + (ROWS - 1) * GAP;
+const G0 = {x: 960 - GW / 2, y: 540 - GH / 2};
 
-const EMERGE: number[] = (() => {
-	const out: number[] = [];
-	WAVES.forEach(([beat, n]) => {
-		for (let j = 0; j < n; j++) out.push(b(beat) + j * Math.max(1, 4 - Math.floor(beat / 3)));
+const cell = (i: number) => ({x: G0.x + (i % COLS) * (CW + GAP), y: G0.y + Math.floor(i / COLS) * (CH + GAP)});
+
+/** The first memory sits just left of centre; the rest arrive by distance from it. */
+const START = 14;
+const ORDER: number[] = (() => {
+	const s = cell(START);
+	return Array.from({length: COLS * ROWS}, (_, i) => i).sort((a, c) => {
+		const A = cell(a);
+		const B = cell(c);
+		return Math.hypot(A.x - s.x, (A.y - s.y) * 1.2) - Math.hypot(B.x - s.x, (B.y - s.y) * 1.2);
 	});
-	return out;
 })();
-
-/** Launch point inside the Progress window (a tile of its grid). */
-const launch = (i: number): Rect => {
-	const S = HERO_SLOT;
-	const col = i % 3;
-	const row = Math.floor(i / 3) % 5;
-	const s = 110;
-	return {x: S.x + 30 + col * (s + 20), y: S.y + 250 + row * (s + 20), w: s, h: s};
-};
 
 export const S07Hero: React.FC = () => {
 	const f = useCurrentFrame();
-	const frozen = f >= STOP;
-	const ff = Math.min(f, STOP - 1); // the build freezes at STOP
 
-	// camera: starts pushed in on the UI, pulls back as memories pile up
-	const cam = mix(1.42, 0.86, ramp(ff, 0, STOP - 4, ease.inOut));
-	const S = HERO_SLOT;
-	const ocx = S.x + S.w / 2;
-	const ocy = S.y + S.h / 2;
+	// timing (beats)
+	const daysIn = b(1.5);
+	const daysOut = b(7);
+	const first = b(8);
+	const last = b(20);
+	const simplify = b(22);
+	const memIn = b(23);
+	const subIn = b(26);
 
-	const open = ramp(f, 0, 10, ease.snap);
-	const dim = frozen ? 0.26 : 1;
-
-	const words = f >= TURN + 8 ? 'Memories.' : 'Days.';
-	const wipeIn = ramp(f, TURN, TURN + 7, ease.snap);
-	const wipeOut = ramp(f, TURN + 8, TURN + 15, ease.snap);
+	// camera: from one memory filling the eye to the whole grid
+	const pull = ramp(f, first, last + b(1), ease.inOut);
+	const s = cell(START);
+	const fx = mix(s.x + CW / 2, 960, pull);
+	const fy = mix(s.y + CH / 2, 540, pull);
+	const scale = mix(2.3, 0.74, pull) * mix(1, 0.97, ramp(f, simplify, b(32), ease.inOut));
+	const dim = mix(1, 0.2, ramp(f, simplify, simplify + b(2.5), ease.inOut));
 
 	return (
 		<AbsoluteFill>
-			{/* ——— stage (camera) ——— */}
 			<div
 				style={{
 					position: 'absolute',
 					inset: 0,
-					transform: `scale(${cam})`,
-					transformOrigin: `${ocx}px ${ocy}px`,
-					filter: dim < 1 ? `brightness(${dim})` : undefined,
+					transform: `translate(${960 - fx}px, ${540 - fy}px) scale(${scale})`,
+					transformOrigin: `${fx}px ${fy}px`,
+					opacity: dim,
 				}}
 			>
-				<MediaSlot
-					id="progress"
-					clip="scroll"
-					playhead={ff}
-					{...S}
-					radius={36}
-					style={{clipPath: `inset(${(1 - open) * 50}% 0 ${(1 - open) * 50}% 0 round 36px)`}}
-				/>
-				{!frozen && <Corners x={S.x} y={S.y} w={S.w} h={S.h} gap={26} len={40} t={3 / cam} p={ramp(f, 8, 16)} />}
-
-				{HERO_RING.map((to, i) => {
-					const at = EMERGE[i];
-					if (at === undefined || ff < at) return null;
-					const t = ramp(ff, at, at + 11, ease.out);
-					const from = launch(i);
-					const r = {x: mix(from.x, to.x, t), y: mix(from.y, to.y, t), w: mix(from.w, to.w, t), h: mix(from.h, to.h, t)};
-					// tether from the window edge to the photo
-					const ex = to.x + to.w / 2 < ocx ? S.x : S.x + S.w;
-					const ey = Math.max(S.y + 60, Math.min(S.y + S.h - 60, r.y + r.h / 2));
-					const px = to.x + to.w / 2 < ocx ? r.x + r.w : r.x;
+				{ORDER.map((ci, k) => {
+					const at = first + (last - first) * Math.pow(k / (ORDER.length - 1), 0.72);
+					if (f < at) return null;
+					const p = ramp(f, at, at + 20);
+					const c = cell(ci);
 					return (
-						<React.Fragment key={i}>
-							{!frozen && <Line x1={ex} y1={ey} x2={px} y2={r.y + r.h / 2} t={2 / cam} p={ramp(ff, at, at + 8)} />}
-							<div style={{position: 'absolute', left: r.x, top: r.y, width: r.w, height: r.h}}>
-								<Memory i={i} w={r.w} h={r.h} bare={i > 5} />
-							</div>
-							{i < 6 && t >= 1 && !frozen && (
-								<Label x={r.x} y={r.y + r.h + 12} size={16 / cam}>
-									Day {dayOf(i)}
-								</Label>
-							)}
-						</React.Fragment>
+						<div
+							key={ci}
+							style={{
+								position: 'absolute',
+								left: c.x,
+								top: c.y,
+								width: CW,
+								height: CH,
+								opacity: p,
+								transform: `scale(${mix(0.97, 1, p)})`,
+							}}
+						>
+							<Memory i={k} w={CW} h={CH} radius={10} />
+						</div>
 					);
 				})}
 			</div>
 
-			{/* ——— STOP ——— */}
-			{frozen && (
-				<>
-					<div style={{position: 'absolute', left: 104, top: 96, color: C.lumo, ...display(900, 112), fontSize: 430}}>30</div>
-					<div style={{position: 'absolute', left: 110, top: 488, overflow: 'hidden'}}>
-						<div style={{color: C.lumo, ...display(900, 104), fontSize: 250, whiteSpace: 'nowrap'}}>{words}</div>
-					</div>
-					{/* the wipe that turns DAYS into MEMORIES */}
-					{f >= TURN && f < TURN + 16 && (
-						<Block
-							x={96}
-							y={500}
-							w={1740}
-							h={228}
-							p={wipeOut > 0 ? 1 - wipeOut : wipeIn}
-							dir={wipeOut > 0 ? 'r' : 'l'}
-						/>
-					)}
-					{f >= SUB && (
-						<>
-							<div
-								style={{
-									position: 'absolute',
-									left: 116,
-									top: 800,
-									color: C.white,
-									...mono(30, 500),
-									letterSpacing: '0.3em',
-									clipPath: `inset(0 ${(1 - ramp(f, SUB, SUB + 10)) * 100}% 0 0)`,
-								}}
-							>
-								Progress you can actually see.
-							</div>
-							<Line x1={116} y1={862} x2={1130} y2={862} p={ramp(f, SUB + 4, SUB + 20, ease.inOut)} t={3} />
-						</>
-					)}
-					<Corners x={60} y={60} w={1800} h={960} len={40} t={3} p={1} />
-				</>
-			)}
+			{/* 30 days. */}
+			<div style={{position: 'absolute', left: 0, right: 0, top: 420, textAlign: 'center', color: C.white, ...display(210, 500)}}>
+				<Reveal p={ramp(f, daysIn, daysIn + 40)} out={ramp(f, daysOut, daysOut + 18, ease.in)} rise={30}>
+					30 days.
+				</Reveal>
+			</div>
+
+			{/* 30 memories. */}
+			<div style={{position: 'absolute', left: 0, right: 0, top: 400, textAlign: 'center', color: C.white, ...display(210, 500)}}>
+				<Reveal p={ramp(f, memIn, memIn + 44)} rise={30}>
+					30 <span style={{color: C.lumo}}>memories.</span>
+				</Reveal>
+			</div>
+			<Caption x={0} y={660} size={34} align="center">
+				<Reveal p={ramp(f, subIn, subIn + 36)} rise={14}>
+					Progress you can see.
+				</Reveal>
+			</Caption>
 		</AbsoluteFill>
 	);
 };
