@@ -62,13 +62,14 @@ export const HIT = {
 	release: 12.028, // downbeat: frame is #E3D290
 	backToBlack: 15.047,
 	lumo: 18.112, // Lumo, the answer
-	product: 21.153, // Set a goal
+	product: 21.153, // Build a habit
 	showUp: 24.172, // Show up — tap Check in
-	checkbox: 27.214, // ☐ → ✓ "Most habit trackers stop here."
-	intoMemory: 42.4, // edit join (downbeat): the checkbox becomes a photo
-	checkinUI: 48.483, // Photo check-in UI
-	everyCheckin: 51.525, // one check-in, one memory — accelerating
-	lookBack: 57.609,
+	checkbox: 27.214, // ✓  "You showed up." / "You put in the work."
+	intoCheckin: 42.4, // edit join (downbeat): the check becomes the real Photo Check-in
+	shutter: 45.441, // downbeat: the shutter press in photo-checkin.MOV lands here
+	everyLine: 48.483, // "Every check-in means something."
+	progressShot: 51.525, // progress.mp4: the photo calendar — "Look back."
+	memoriesBuild: 55.325, // real memories: 1 → 2 → 4 → 5
 	breakDown: 60.627, // BREAK — "30 days."
 	reentry: 63.669, // RE-ENTRY — the frame is #E3D290
 	thirtyMemories: 69.753, // edit join: "30 memories."

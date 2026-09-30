@@ -45,6 +45,22 @@ export const memorySrc = (set: keyof typeof MEMORIES, i: number): string | null 
 	return staticFile(list[i % list.length]);
 };
 
+/** File stem of a memory photo (e.g. "day15"), or null. */
+export const memoryName = (set: keyof typeof MEMORIES, i: number): string | null => {
+	const list = inDir(MEMORIES[set].dir, IMAGE);
+	if (!list.length) return null;
+	return (list[i % list.length].split('/').pop() ?? '').replace(IMAGE, '');
+};
+
+/** How many real memory photos exist. */
+export const memoryCount = (set: keyof typeof MEMORIES) => inDir(MEMORIES[set].dir, IMAGE).length;
+
+/** "Day 15" from a file named day15.jpg. */
+export const memoryDay = (set: keyof typeof MEMORIES, i: number): string => {
+	const m = memoryName(set, i)?.match(/(\d+)/);
+	return m ? `Day ${m[1].padStart(2, '0')}` : '';
+};
+
 export const musicSrc = (): string | null => {
 	const hit = inDir(MUSIC_DIR, AUDIO)[0];
 	return hit ? staticFile(hit) : null;

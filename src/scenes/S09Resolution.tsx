@@ -6,7 +6,8 @@
 import React from 'react';
 import {AbsoluteFill, useCurrentFrame} from 'remotion';
 import {HIT, beats as b} from '../beats';
-import {HAIRLINE, PROGRESS_CENTER, RADIUS, progressTile} from '../components/Screen';
+import {HAIRLINE, progressTile} from '../components/Screen';
+import {CALENDAR, PROGRESS_RAD, PROGRESS_SHOT} from './S05Progress';
 import {MediaSlot} from '../components/MediaSlot';
 import {Memory} from '../components/Memory';
 import {Reveal} from '../components/type';
@@ -14,12 +15,13 @@ import {at} from '../timeline';
 import {Box, ease, mix, mixBox, ramp} from '../lib/anim';
 import {C, display} from '../theme';
 
-const PICKS = [0, 14, 29]; // Day 01, Day 15, Day 30
+const PICKS = [0, 2, 3]; // day01, day15, day16 — the strongest real memories
 const CW = 460;
 const CH = 575;
 const GAP = 56;
 const X0 = 960 - (PICKS.length * CW + (PICKS.length - 1) * GAP) / 2;
 const Y = 80;
+const HOME_BOX: Box = {...PROGRESS_SHOT, x: 960 - PROGRESS_SHOT.w / 2};
 const card = (k: number): Box => ({x: X0 + k * (CW + GAP), y: Y, w: CW, h: CH});
 
 export const S09Resolution: React.FC = () => {
@@ -38,15 +40,16 @@ export const S09Resolution: React.FC = () => {
 					id="progress"
 					clip="hold"
 					playhead={0}
-					{...PROGRESS_CENTER}
-					radius={RADIUS}
+					{...HOME_BOX}
+					crop={CALENDAR}
+					radius={PROGRESS_RAD}
 					style={{opacity: winIn, transform: `translateY(${(1 - winIn) * 40}px)`, boxShadow: HAIRLINE}}
 				/>
 			)}
 			{PICKS.map((i, k) => {
 				const a = b(k * 0.6);
 				const p = ramp(f, a, a + b(1));
-				const r = mixBox(card(k), progressTile(PROGRESS_CENTER, k, 3), gather);
+				const r = mixBox(card(k), progressTile({...HOME_BOX, y: HOME_BOX.y + 120}, k, 3), gather);
 				return (
 					<div
 						key={i}
@@ -79,10 +82,10 @@ export const S09Resolution: React.FC = () => {
 				}}
 			>
 				<Reveal p={ramp(f, text, text + 22)} out={ramp(f, fold - 12, fold, ease.in)}>
-					Progress you can
+					See how far
 				</Reveal>
 				<Reveal p={ramp(f, text + 10, text + 32)} out={ramp(f, fold - 12, fold, ease.in)}>
-					look back on.
+					you’ve come.
 				</Reveal>
 			</div>
 		</AbsoluteFill>

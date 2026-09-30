@@ -5,8 +5,8 @@
  */
 import React from 'react';
 import {Img} from 'remotion';
-import {MEMORIES} from '../media.config';
-import {memorySrc} from '../lib/media';
+import {MEMORIES, MEMORY_VIEW} from '../media.config';
+import {memoryName, memorySrc} from '../lib/media';
 import {C, text} from '../theme';
 
 type Props = {
@@ -30,7 +30,16 @@ export const Memory: React.FC<Props> = ({set = 'a', i, w, h, zoom = 1, radius = 
 	if (src) {
 		return (
 			<div style={box}>
-				<Img src={src} style={{width: '100%', height: '100%', objectFit: 'cover', transform: `scale(${zoom})`}} />
+				<Img
+					src={src}
+					style={{
+						width: '100%',
+						height: '100%',
+						objectFit: 'cover',
+						transform: `scale(${zoom})`,
+						objectViewBox: MEMORY_VIEW[memoryName(set, i) ?? ''],
+					}}
+				/>
 			</div>
 		);
 	}

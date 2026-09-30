@@ -9,7 +9,8 @@ import {S01bRelease} from './scenes/S01bRelease';
 import {S02Lumo} from './scenes/S02Lumo';
 import {S03Product} from './scenes/S03Product';
 import {S04CheckIn} from './scenes/S04CheckIn';
-import {S05LookBack} from './scenes/S05LookBack';
+import {S05Progress} from './scenes/S05Progress';
+import {S06Memories} from './scenes/S06Memories';
 import {S07Hero} from './scenes/S07Hero';
 import {S08Social} from './scenes/S08Social';
 import {S09Resolution} from './scenes/S09Resolution';
@@ -21,7 +22,8 @@ const SCENES: [keyof typeof TIMELINE, React.FC][] = [
 	['lumo', S02Lumo],
 	['product', S03Product],
 	['checkin', S04CheckIn],
-	['lookBack', S05LookBack],
+	['progress', S05Progress],
+	['memories', S06Memories],
 	['hero', S07Hero],
 	['social', S08Social],
 	['resolution', S09Resolution],

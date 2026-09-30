@@ -8,18 +8,21 @@ import React from 'react';
 import {AbsoluteFill, Easing, useCurrentFrame} from 'remotion';
 import {HIT, beats as b} from '../beats';
 import {HAIRLINE} from '../components/Screen';
-import {MediaSlot} from '../components/MediaSlot';
+import {Crop, MediaSlot} from '../components/MediaSlot';
 import {Caption, Reveal} from '../components/type';
 import {at} from '../timeline';
 import {Box, ease, mix, mixBox, ramp} from '../lib/anim';
 import {C, display} from '../theme';
 
-const W = 420;
-const H = 800;
-const Y = 90;
+const W = 520;
+const H = 560;
+const Y = 200;
 const SOLO: Box = {x: 960 - W / 2, y: Y, w: W, h: H};
-const A: Box = {x: 470, y: Y, w: W, h: H};
-const B: Box = {x: 1030, y: Y, w: W, h: H};
+const A: Box = {x: 380, y: Y, w: W, h: H};
+const B: Box = {x: 1020, y: Y, w: W, h: H};
+// both real screens framed from "Today's habit" down (their stats cards are never shown)
+const CROP_A: Crop = {x: 0.5, y: 0.65, zoom: 1}; // full width, 40–90 %
+const CROP_B: Crop = {x: 0.5, y: 0.69, zoom: 1}; // full width, 38–100 %
 const RAD = 48;
 const LINE_Y = Y + H / 2;
 const PUSH = Easing.bezier(0.6, 0, 0.9, 0.45);
@@ -85,6 +88,7 @@ export const S08Social: React.FC = () => {
 			<div style={{position: 'absolute', inset: 0}}>
 				<MediaSlot
 					id="sharedGoalA"
+					crop={CROP_A}
 					clip="view"
 					playhead={f - bridge - b(1.25)}
 					{...aBox}
@@ -94,6 +98,7 @@ export const S08Social: React.FC = () => {
 				{bIn > 0 && (
 					<MediaSlot
 						id="sharedGoalB"
+						crop={CROP_B}
 						clip="view"
 						playhead={f - bridge - b(5.25)}
 						{...bBox}
@@ -124,7 +129,7 @@ export const S08Social: React.FC = () => {
 				)}
 				<Caption x={0} y={Y + H + 30} size={28} align="center" color={C.lumo}>
 					<Reveal p={ramp(f, bridge + b(10.5), bridge + b(11.5))} rise={10}>
-						Our goal
+						Shared habit
 					</Reveal>
 				</Caption>
 			</div>

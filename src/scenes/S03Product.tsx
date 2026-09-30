@@ -58,7 +58,7 @@ export const S03Product: React.FC = () => {
 	const showUp = at('product', HIT.showUp);
 	const end = at('product', HIT.checkbox);
 
-	const T = {typing: 10, tap: 0, added: 0};
+	const T = {typing: 0, tap: 0, added: 0}; // open straight on the typing (no Home stats card behind the sheet)
 	T.tap = T.typing + clipFrames('createGoal', 'typing') + 8;
 	T.added = T.tap + 14;
 	const tapPill = showUp + b(1.75);
@@ -118,7 +118,7 @@ export const S03Product: React.FC = () => {
 			{f >= showUp && <Tap f={f} at={tapPill - 4} x={pill.x} y={pill.y} />}
 
 			<Word f={f} a={2} b={showUp}>
-				Set a goal.
+				Build a habit.
 			</Word>
 			<Word f={f} a={showUp} b={tapPill + 10}>
 				Show up.

@@ -10,7 +10,7 @@ import {Headline, Reveal} from '../components/type';
 import {brand} from '../lib/media';
 import {at} from '../timeline';
 import {ease, mix, ramp} from '../lib/anim';
-import {C} from '../theme';
+import {C, text} from '../theme';
 
 const ICON = {cx: 960, cy: 340, size: 190};
 
@@ -52,7 +52,10 @@ export const S10End: React.FC = () => {
 			<Headline x={0} y={478} size={112} weight={600} align="center">
 				<Reveal p={ramp(f, 18, 40)}>Lumo</Reveal>
 			</Headline>
-			<Headline x={0} y={690} size={56} align="center" color={C.soft}>
+			<div style={{position: 'absolute', left: 0, right: 0, top: 612, textAlign: 'center', color: C.faint, ...text(30, 500), letterSpacing: '0.04em'}}>
+				<Reveal p={ramp(f, 30, 50)}>Social habit tracker</Reveal>
+			</div>
+			<Headline x={0} y={720} size={60} align="center" color={C.white}>
 				<Reveal p={ramp(f, lastBar, lastBar + 20)}>Your progress</Reveal>
 				<Reveal p={ramp(f, lastBar + 6, lastBar + 26)}>has a story.</Reveal>
 			</Headline>

@@ -13,8 +13,9 @@ export const TIMELINE = {
 	release: span(HIT.pickup, HIT.backToBlack),
 	lumo: span(HIT.backToBlack, HIT.product),
 	product: span(HIT.product, HIT.checkbox),
-	checkin: span(HIT.checkbox, HIT.lookBack), // HERO FEATURE: a check-in becomes a memory
-	lookBack: span(HIT.lookBack, HIT.breakDown),
+	checkin: span(HIT.checkbox, HIT.progressShot), // HERO FEATURE: the real Photo Check-in
+	progress: span(HIT.progressShot, HIT.memoriesBuild),
+	memories: span(HIT.memoriesBuild, HIT.breakDown),
 	hero: span(HIT.breakDown, HIT.silence),
 	social: span(HIT.silence, HIT.resolution),
 	resolution: span(HIT.resolution, HIT.endCard),
